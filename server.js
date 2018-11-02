@@ -2,7 +2,25 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const path = require("path");
 const app = express();
+//TCP
+const TCP_PORT = 23;
 
+const net = require("net");
+const tcpServer = net.createServer();
+tcpServer.listen(TCP_PORT, "127.0.0.1", () => {
+  console.log("TCP Server is running on port " + TCP_PORT + ".");
+});
+
+tcpServer.on("connection", function(sock) {
+  console.log(
+    "TCP Client Connected:" + sock.remoteAddress + ":" + sock.remotePort
+  );
+
+  sock.on("data", function(data) {
+    console.log(data);
+  });
+});
+// TPC END
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
 

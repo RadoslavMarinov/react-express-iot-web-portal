@@ -2,17 +2,7 @@ import React, { Component } from "react";
 import logo from "./logo.svg";
 import "./App.css";
 
-// import io from "socket.io-client";
-// const socket = io("http://localhost:3000");
-
 import "./components/socket-io";
-// socket.on("connect", socket => {
-//   console.log("Greetings from server: ");
-// });
-
-// socket.on("greeting", data => {
-//   console.log("DATA:", data);
-// });
 
 class App extends Component {
   state = {
@@ -28,7 +18,7 @@ class App extends Component {
   callApi = async () => {
     const response = await fetch("/api/hello");
     const body = await response.text();
-    console.log(body);
+    console.log("EXPRESS RESPONSE:", body);
     if (response.status !== 200) throw Error(body.message);
     return body;
   };

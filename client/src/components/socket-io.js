@@ -11,23 +11,3 @@ socket.on("greeting", data => {
 });
 
 export { socket };
-
-// import { config } from "./config";
-// import io from "socket.io-client";
-// const socket = io(config.backEndServer.url);
-
-// console.log(config);
-
-// socket.on("connect", function() {
-//   console.log(
-//     "Socket IO Client Connected to Server:",
-//     config.backEndServer.url
-//   );
-// });
-
-// setInterval(() => {
-//   socket.emit("test", { data: "client test" });
-// }, 2000);
-
-// socket.on("event", function(data) {});
-// socket.on("disconnect", function() {});
