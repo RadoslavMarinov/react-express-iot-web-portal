@@ -1,10 +1,31 @@
 import React, { Component } from "react";
-import logo from "./logo.svg";
-import "./App.css";
-
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import "./components/socket-io";
 
+import Auth from "./routes/Auth";
+import Login from "./routes/Login";
+import Register from "./routes/Register";
+
 class App extends Component {
+  render() {
+    return (
+      <BrowserRouter>
+        <Switch>
+          <Route exact path="/login" render={props => <Login {...props} />} />
+          <Route
+            exact
+            path="/register"
+            render={props => <Register {...props} />}
+          />
+          <Route exact path="/auth" render={props => <Auth {...props} />} />
+        </Switch>
+      </BrowserRouter>
+    );
+  }
+}
+export default App;
+
+/*
   state = {
     response: "",
     post: "",
@@ -34,38 +55,5 @@ class App extends Component {
     const body = await response.text();
     this.setState({ responseToPost: body });
   };
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-        <p>{this.state.response}</p>
-        <form onSubmit={this.handleSubmit}>
-          <p>
-            <strong>Post to Server:</strong>
-          </p>
-          <input
-            type="text"
-            value={this.state.post}
-            onChange={e => this.setState({ post: e.target.value })}
-          />
-          <button type="submit">Submit</button>
-        </form>
-        <p>{this.state.responseToPost}</p>
-      </div>
-    );
-  }
-}
-export default App;
+
+*/

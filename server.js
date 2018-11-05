@@ -33,16 +33,29 @@ io.on("connection", function(socket) {
   console.log("Client connected", socket.client.id);
   socket.emit("greeting", { Hello: 1 });
 });
-
+var response;
 // API calls
 app.get("/api/hello", (req, res) => {
-  res.send('{"riko":"sonq"}\r\nJSON');
+  res.write('{"riko":"sonq"}\r\nJSON');
+
+  var str;
+  dai(res);
+
+  // res.end();
+  // res.send('{"riko":"sonq"}\r\nJSON');
 });
 
-// app.get("*", (req, res) => {
-//   console.log(req.url);
-//   res.send('{"riko":"sonq"}\r\nJSON');
-// });
+app.post("/register/data", (req, res) => {
+  console.log(req.body);
+  res.end(JSON.stringify({ status: "ok" }));
+});
+
+function dai(res) {
+  var i = 1;
+  setInterval(function() {
+    res.write('{"riko":"sonq"}\r\nJSON' + i++);
+  }, 2000);
+}
 
 app.post("/api/world", (req, res) => {
   console.log(req.body);
