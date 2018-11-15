@@ -1,5 +1,5 @@
 const express = require("express");
-const session = require("express-session");
+// const session = require("express-session");
 const bodyParser = require("body-parser");
 const path = require("path");
 const app = express();
@@ -14,9 +14,9 @@ const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(
-  session({ secret: "rikotech-taina", resave: false, saveUninitialized: false })
-);
+// app.use(
+//   session({ secret: "rikotech-taina", resave: false, saveUninitialized: false })
+// );
 
 // SOCKET
 io.on("connection", function(socket) {
