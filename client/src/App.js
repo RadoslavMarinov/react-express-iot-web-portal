@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
 import "./components/socket-io";
 
+import Home from "./routes/Home";
 import Auth from "./routes/Auth";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
@@ -11,6 +12,7 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Switch>
+          <Route exact path="/" render={props => <Home {...props} />} />
           <Route exact path="/login" render={props => <Login {...props} />} />
           <Route
             exact

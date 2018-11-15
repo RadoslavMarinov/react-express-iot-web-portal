@@ -30,6 +30,8 @@ class Register extends Component {
     super(props);
     this.state = {
       email: "",
+      username: "",
+      deviceId: "",
       password: "",
       password2: "",
       redirect: false,
@@ -57,19 +59,21 @@ class Register extends Component {
     const validateMsg = this.validate();
     if (validateMsg !== "valid") {
       this.setState({ info: validateMsg });
-      console.log("AAAAAAA");
+      console.log(" *** Form not valid!");
       return;
     } else {
       this.setState({ info: "" });
     }
 
-    const res = await fetch("/register/data", {
+    const res = await fetch("/api/register/data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
         email: this.state.email,
+        username: this.state.username,
+        deviceId: this.state.deviceId,
         password: this.state.password
       })
     });
@@ -108,6 +112,22 @@ class Register extends Component {
               value={this.state.email}
               onChange={this.handleChange}
               placeholder="Place your emaile here"
+            />
+            <Label>Username</Label>
+            <Input
+              name="username"
+              type="text"
+              value={this.state.username}
+              onChange={this.handleChange}
+              placeholder="Place your username here"
+            />
+            <Label>Device Id</Label>
+            <Input
+              name="deviceId"
+              type="text"
+              value={this.state.deviceId}
+              onChange={this.handleChange}
+              placeholder="Place your Device Id here"
             />
             <Label>Password</Label>
             <Input
