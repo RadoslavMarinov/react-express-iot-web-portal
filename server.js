@@ -61,7 +61,7 @@ app.post("/api/register/data", async (req, res) => {
         throw err;
       });
   } catch (error) {
-    res.send(JSON.stringify({ error: err }));
+    res.send(JSON.stringify({ error: error }));
     console.log(error);
   }
 });
