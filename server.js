@@ -143,10 +143,10 @@ server.on("connection", socket => {
   socket.on("data", data => {
     str = data.toString();
     var method = str.substr(0, str.indexOf(" "));
+    console.log(str);
     // console.log(method);
     if (!(method === "GET" || method === "POST")) {
       // io.emit("change", data);
-      console.log(data);
     }
   });
 });
