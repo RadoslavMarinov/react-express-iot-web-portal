@@ -146,6 +146,7 @@ server.on("connection", socket => {
     // console.log(method);
     if (!(method === "GET" || method === "POST")) {
       console.log(data.toString());
+      io.emit("change", data.toString());
     }
   });
 });
