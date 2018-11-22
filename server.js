@@ -146,12 +146,12 @@ server.on("connection", socket => {
     console.log(str);
     // console.log(method);
     if (!(method === "GET" || method === "POST")) {
-      // io.emit("change", data);
     }
   });
 });
 server.on("clientError", (err, socket) => {
   console.log("ERROR");
+  io.emit("change", "Server Error");
   socket.removeAllListeners("error");
 });
 
