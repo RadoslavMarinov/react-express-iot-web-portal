@@ -6,6 +6,7 @@ import Home from "./routes/Home";
 import Auth from "./routes/Auth";
 import Login from "./routes/Login";
 import Register from "./routes/Register";
+import User from "./routes/User";
 
 class App extends Component {
   render() {
@@ -20,6 +21,7 @@ class App extends Component {
             render={props => <Register {...props} />}
           />
           <Route exact path="/auth" render={props => <Auth {...props} />} />
+          <Route exact path="/user" render={props => <User {...props} />} />
         </Switch>
       </BrowserRouter>
     );

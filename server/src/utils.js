@@ -13,6 +13,21 @@ function constructUserObjectForDb(reqBody) {
   return obj;
 }
 
+async function addUserSession(username, obj) {
+  const result = await db.appendOneToArray(
+    "users",
+    {
+      username: username
+    },
+    "sessions",
+    obj
+  );
+  if (result.result.nModified > 0) {
+    return true;
+  }
+  return false;
+}
+
 function validateRegReques(reqBody) {
   return new Promise((resolve, reject) => {
     let { username } = reqBody;
@@ -51,5 +66,6 @@ function validateRegReques(reqBody) {
 
 module.exports = {
   constructUserObjectForDb: constructUserObjectForDb,
-  validateRegReques: validateRegReques
+  validateRegReques: validateRegReques,
+  addUserSession: addUserSession
 };

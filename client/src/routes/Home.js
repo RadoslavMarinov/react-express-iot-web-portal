@@ -1,30 +1,64 @@
 import React, { Component } from "react";
 import NavBar from "../components/styled/NavBar";
+import code from "jwt-simple";
+
+const KEY = "taina";
 
 class Home extends Component {
   constructor(props) {
     super(props);
-    this.state = { user: "" };
+    this.state = { user: "", isAuthenticated: false };
   }
 
-  getQueryStr(params) {
-    let query = Object.keys(params)
-      .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
-      .join("&");
+  isAuthenticated = () => {
+    var sessionId = localStorage.getItem("sessionId");
+    var now_secs = Date.now() / 1000;
 
-    return query;
+    if (sessionId) {
+      var session = code.decode(sessionId, KEY);
+      var { expTime } = session;
+
+      console.log("Now: " + now_secs, "ExpTime: " + expTime);
+
+      if (now_secs > expTime) {
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+      // this.setState({ isAuthenticated: false });
+    }
+  };
+
+  async componentDidMount() {
+    if (this.isAuthenticated()) {
+      this.setState({ isAuthenticated: true });
+    } else {
+      this.setState({ isAuthenticated: false });
+    }
   }
-
-  componentDidMount() {}
 
   render() {
     return (
       <React.Fragment>
         <NavBar />
-        <h1 style={{ display: "block" }}>Hello {this.state.user}</h1>;
+        {this.state.isAuthenticated ? (
+          <h1>Authenticated</h1>
+        ) : (
+          <h1>Not Authenticated</h1>
+        )}
       </React.Fragment>
     );
   }
 }
+
+// getQueryStr(params) {
+//   let query = Object.keys(params)
+//     .map(k => encodeURIComponent(k) + "=" + encodeURIComponent(params[k]))
+//     .join("&");
+
+//   return query;
+// }
 
 export default Home;

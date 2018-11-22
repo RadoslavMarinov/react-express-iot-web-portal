@@ -28,6 +28,10 @@ GET /api/hello HTTP/1.1<CR><LF>Host: 192.168.0.102<CR><LF>Accept: application/js
 
 GET /api/hello HTTP/1.1\r\nHost: 192.168.0.102\r\nAccept: application/json\r\n\r\n
 
+GET / HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection:Keep-Alive\r\neep-Alive:timeout=1000, max=1000
+
+GET / HTTP/1.1<CR><LF>Host: 127.0.0.1<CR><LF>Connection:Keep-Alive<CR><LF>Keep-Alive:timeout=100, max=100<CR><LF><CR><LF>
+
 
 Database:
 
