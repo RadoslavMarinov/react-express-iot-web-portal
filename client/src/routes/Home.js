@@ -12,7 +12,7 @@ class Home extends Component {
 
     socket.on("change", data => {
       this.setState({ info: data });
-      console.log(data);
+      console.log(data.toString("utf8"));
     });
   }
 
