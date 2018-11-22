@@ -150,6 +150,7 @@ server.on("connection", socket => {
   });
 });
 server.on("clientError", (err, socket) => {
+  console.log("ERROR");
   socket.removeAllListeners("error");
 });
 
