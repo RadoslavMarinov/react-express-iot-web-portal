@@ -11,8 +11,8 @@ class Home extends Component {
     this.state = { user: "", isAuthenticated: false, info: "" };
 
     socket.on("change", data => {
-      this.setState({ info: data });
-      console.log("NEW data: " + data.toString("utf8"));
+      // this.setState({ info: data });
+      console.log("NEW data: ", data);
     });
   }
 
