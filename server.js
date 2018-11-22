@@ -127,6 +127,10 @@ app.post("/api/world", (req, res) => {
   );
 });
 
+app.get("/test", (req, res) => {
+  res.send("Bravo Riko");
+});
+
 // PRODUCNTION :::
 if (process.env.NODE_ENV === "production") {
   console.log("Node Env:", process.env.NODE_ENV);
