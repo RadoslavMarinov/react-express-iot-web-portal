@@ -7,7 +7,7 @@ socket.on("connect", () => {
 });
 
 socket.on("greeting", data => {
-  console.log("DATA:", data);
+  console.log("DATA:", JSON.stringify(data));
 });
 
 export { socket };

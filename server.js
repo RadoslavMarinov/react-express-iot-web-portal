@@ -142,11 +142,11 @@ server.on("connection", socket => {
   console.log("New connection");
   socket.on("data", data => {
     str = data.toString();
+    io.emit("change", { data: str });
     var method = str.substr(0, str.indexOf(" "));
     // console.log(method);
     if (!(method === "GET" || method === "POST")) {
       console.log(data.toString());
-      io.emit("change", data.toString());
     }
   });
 });
