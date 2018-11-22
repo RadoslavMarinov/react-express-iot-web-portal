@@ -4,7 +4,7 @@ AT+CIPSTART="TCP","electricity-manager1.herokuapp.com",80<CR><LF>
 "AT+CIPSEND=69<CR><LF>"
 
 /* For C to calculate string len
-GET /api/hello HTTP/1.1\r\nHost: electricity-manager1.herokuapp.com\r\n\r\n
+GET /test HTTP/1.1\r\nHost: electricity-manager1.herokuapp.com\r\n\r\n
 */
 GET /api/hello HTTP/1.1<CR><LF>Host: electricity-manager1.herokuapp.com<CR><LF><CR><LF>
 

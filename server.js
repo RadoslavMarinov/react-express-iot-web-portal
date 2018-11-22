@@ -146,11 +146,11 @@ server.on("connection", socket => {
   console.log("New connection");
   socket.on("data", data => {
     str = data.toString();
-    var method = str.substr(0, str.indexOf(" "));
+    // var method = str.substr(0, str.indexOf(" "));
     console.log("AAAAAAAAAAA", str);
     // console.log(method);
-    if (!(method === "GET" || method === "POST")) {
-    }
+    // if (!(method === "GET" || method === "POST")) {
+    // }
   });
 });
 server.on("clientError", (err, socket) => {
