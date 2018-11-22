@@ -145,7 +145,7 @@ server.on("connection", socket => {
     var method = str.substr(0, str.indexOf(" "));
     // console.log(method);
     if (!(method === "GET" || method === "POST")) {
-      io.emit("change", data);
+      // io.emit("change", data);
       console.log(data.toString());
     }
   });
