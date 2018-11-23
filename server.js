@@ -122,6 +122,7 @@ function dai(res) {
 
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route);
+  res.send("HEllo from post");
 });
 
 app.post("/api/world", (req, res) => {
