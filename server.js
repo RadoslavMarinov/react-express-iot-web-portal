@@ -143,7 +143,11 @@ if (process.env.NODE_ENV === "production") {
 }
 
 server.on("connection", socket => {
-  console.log("New connection. Address: " + socket.address());
+  console.log(
+    "New connection",
+    "Address: " + socket.address().address,
+    "Port: " + socket.address().port
+  );
 });
 // server.on("clientError", (err, socket) => {
 //   console.log("ERROR");
