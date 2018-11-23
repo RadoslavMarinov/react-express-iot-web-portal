@@ -143,20 +143,12 @@ if (process.env.NODE_ENV === "production") {
 }
 
 server.on("connection", socket => {
-  console.log("New connection");
-  socket.on("data", data => {
-    str = data.toString();
-    // var method = str.substr(0, str.indexOf(" "));
-    console.log("AAAAAAAAAAA", str);
-    // console.log(method);
-    // if (!(method === "GET" || method === "POST")) {
-    // }
-  });
+  console.log("New connection. Address: " + socket.address());
 });
-server.on("clientError", (err, socket) => {
-  console.log("ERROR");
-  io.emit("change", "Server Error");
-  socket.removeAllListeners("error");
-});
+// server.on("clientError", (err, socket) => {
+//   console.log("ERROR");
+//   io.emit("change", "Server Error");
+//   socket.removeAllListeners("error");
+// });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
