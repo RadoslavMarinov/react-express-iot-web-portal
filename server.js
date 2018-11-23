@@ -120,6 +120,10 @@ function dai(res) {
   }, 2000);
 }
 
+app.post("/enddev", (req, res) => {
+  console.log("REQUEST TO ", req.route);
+});
+
 app.post("/api/world", (req, res) => {
   console.log(req.body);
   res.send(
@@ -148,8 +152,19 @@ server.on("connection", socket => {
     "Address: " + socket.address().address,
     "Port: " + socket.address().port
   );
+
+  socket.setTimeout(30 * 1000);
+  socket.on("timeout", () => {
+    console.log("socket timeout");
+    socket.end();
+  });
+
   socket.on("close", hadError => {
-    console.log("Socket closed: " + hadError);
+    console.log(
+      hadError
+        ? "Socket closed due to ERROR during transmission"
+        : "Socket closed"
+    );
   });
 });
 // server.on("clientError", (err, socket) => {

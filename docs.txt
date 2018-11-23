@@ -9,8 +9,8 @@ GET /test HTTP/1.1\r\nHost: electricity-manager1.herokuapp.com\r\n\r\n
 GET /test HTTP/1.1<CR><LF>Host: electricity-manager1.herokuapp.com<CR><LF><CR><LF>
 
 // MINIMIZED TESTED
-AT+CIPSEND=20<CR><LF>
-GET /test HTTP/1.1<CR><LF>
+AT+CIPSEND=22<CR><LF><CR><LF>
+GET /test HTTP/1.1<CR><LF>Host: electricity-manager1.herokuapp.com<CR><LF><CR><LF>
 
 // LOCAL SERVER
 
@@ -22,6 +22,8 @@ AT+CIPSEND=48<CR><LF>
 GET /api/hello HTTP/1.1\r\nHost: 192.168.0.102\r\n\r\n
 */
 
+//-- POSTS
+POST /enddev HTTP/1.1<CR><LF>Host: electricity-manager1.herokuapp.com<CR><LF><CR><LF>
 
 //--
 AT+CIPSEND=74<CR><LF>
