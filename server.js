@@ -148,6 +148,9 @@ server.on("connection", socket => {
     "Address: " + socket.address().address,
     "Port: " + socket.address().port
   );
+  socket.on("close", hadError => {
+    console.log("Socket closed: " + hadError);
+  });
 });
 // server.on("clientError", (err, socket) => {
 //   console.log("ERROR");
