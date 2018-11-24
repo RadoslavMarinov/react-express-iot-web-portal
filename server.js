@@ -124,7 +124,7 @@ function dai(res) {
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route);
   res.set("Content-Type", "text/plain");
-  res.send("HEllo from post");
+  res.write("HEllo from post");
 });
 
 app.post("/api/world", (req, res) => {
