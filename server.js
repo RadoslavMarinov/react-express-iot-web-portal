@@ -120,8 +120,10 @@ function dai(res) {
   }, 2000);
 }
 
+// ENDEV
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route);
+  res.set("Content-Type", "text/plain");
   res.send("HEllo from post");
 });
 
@@ -154,7 +156,7 @@ server.on("connection", socket => {
     "Port: " + socket.address().port
   );
 
-  socket.setTimeout(5 * 1000);
+  socket.setTimeout(30 * 1000);
   socket.on("timeout", () => {
     console.log("socket timeout");
     socket.end();
