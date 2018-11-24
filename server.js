@@ -154,7 +154,7 @@ server.on("connection", socket => {
     "Port: " + socket.address().port
   );
 
-  socket.setTimeout(30 * 1000);
+  socket.setTimeout(5 * 1000);
   socket.on("timeout", () => {
     console.log("socket timeout");
     socket.end();
