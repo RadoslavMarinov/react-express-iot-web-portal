@@ -123,7 +123,7 @@ function dai(res) {
 // ENDDEV
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route);
-  console.log("Req Header ", req.header);
+  console.log("Req Header ", req.headers);
   console.log("Body:", req.body);
   io.emit("change", req.body);
   res.set("Content-Type", "text/plain");
