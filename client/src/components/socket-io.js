@@ -10,8 +10,8 @@ socket.on("greeting", data => {
   console.log("DATA:", JSON.stringify(data));
 });
 
-socket.on('disconnect', (reason) => {
+socket.on("disconnect", reason => {
   console.log("Socket Disconected. Reason: ", reason);
-}
+});
 
 export { socket };
