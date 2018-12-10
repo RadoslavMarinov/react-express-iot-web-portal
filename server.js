@@ -132,8 +132,11 @@ app.post("/enddev", (req, res) => {
   res.set("Content-Type", "text/plain");
 
   var num = 0;
-  setInterval(() => {
+  var interv = setInterval(() => {
     res.write("Hi for " + ++num + " time!");
+    if (num > 20) {
+      clearInterval(interv);
+    }
   }, 1000);
   res.write("Thanks!");
 });
