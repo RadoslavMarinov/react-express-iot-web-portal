@@ -120,7 +120,7 @@ function dai(res) {
   }, 2000);
 }
 
-// ENDEV
+// ENDDEV
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route);
   console.log("Body:", req.body);
@@ -160,7 +160,7 @@ server.on("connection", socket => {
 
   socket.setTimeout(10 * 1000);
   socket.on("timeout", () => {
-    console.log("socket timeout", socket);
+    console.log("socket timeout");
     socket.end();
   });
 
