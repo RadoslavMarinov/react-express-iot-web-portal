@@ -11,6 +11,7 @@ const io = require("socket.io")(server);
 const db = require("./server/src/db/mongo");
 const utils = require("./server/src/utils");
 const sessions = require("./server/src/sessions");
+const { devices } = require("./server/src/devices");
 
 const port = process.env.PORT || 5000;
 app.use(bodyParser.json());
@@ -125,8 +126,15 @@ app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route);
   console.log("Req Header ", req.headers);
   console.log("Body:", req.body);
+
+  devices.push(req.body);
   io.emit("change", req.body);
   res.set("Content-Type", "text/plain");
+
+  var num = 0;
+  setInterval(() => {
+    res.write("Hi for " + ++num + " time!");
+  }, 1000);
   res.write("Thanks!");
 });
 
