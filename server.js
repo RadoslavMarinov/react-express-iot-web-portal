@@ -123,8 +123,10 @@ function dai(res) {
 // ENDEV
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route);
+  console.log("Body:", req.body);
+  io.emit("change", req.body);
   res.set("Content-Type", "text/plain");
-  res.write("HEllo from post");
+  res.write("Thanks!");
 });
 
 app.post("/api/world", (req, res) => {
@@ -156,9 +158,9 @@ server.on("connection", socket => {
     "Port: " + socket.address().port
   );
 
-  socket.setTimeout(30 * 1000);
+  socket.setTimeout(10 * 1000);
   socket.on("timeout", () => {
-    console.log("socket timeout");
+    console.log("socket timeout", socket);
     socket.end();
   });
 
@@ -170,10 +172,5 @@ server.on("connection", socket => {
     );
   });
 });
-// server.on("clientError", (err, socket) => {
-//   console.log("ERROR");
-//   io.emit("change", "Server Error");
-//   socket.removeAllListeners("error");
-// });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
