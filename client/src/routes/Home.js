@@ -16,6 +16,16 @@ class Home extends Component {
     });
   }
 
+  async submit() {
+    const res = await fetch("/enddev", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: '{"id": "FFAABBCC"}'
+    });
+  }
+
   isAuthenticated = () => {
     var sessionId = localStorage.getItem("sessionId");
     var now_secs = Date.now() / 1000;
@@ -54,6 +64,7 @@ class Home extends Component {
         ) : (
           <h1>Not Authenticated</h1>
         )}
+        <button onClick={this.submit}>Post enddev</button>
       </React.Fragment>
     );
   }
