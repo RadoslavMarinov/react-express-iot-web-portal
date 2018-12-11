@@ -1,43 +1,13 @@
-AT+CIPSTART="TCP","electricity-manager1.herokuapp.com",80<CR><LF>
-
-"AT+CIPSEND=69\r\n"
-"AT+CIPSEND=69<CR><LF>"
-
-/* For C to calculate string len
-GET /test HTTP/1.1\r\nHost: electricity-manager1.herokuapp.com\r\n\r\n
-*/
-GET /test HTTP/1.1<CR><LF>Host: electricity-manager1.herokuapp.com<CR><LF><CR><LF>
-
-// MINIMIZED TESTED
-AT+CIPSEND=22<CR><LF><CR><LF>
-GET /test HTTP/1.1<CR><LF>Host: electricity-manager1.herokuapp.com<CR><LF><CR><LF>
-
-// LOCAL SERVER
-
-AT+CIPSTART="TCP","192.168.0.102",3000<CR><LF>
-
-AT+CIPSEND=48<CR><LF>
-
-/* For C to calculate string len
-GET /api/hello HTTP/1.1\r\nHost: 192.168.0.102\r\n\r\n
-*/
-
-//-- POSTS
-POST /enddev HTTP/1.1<CR><LF>Host: electricity-manager1.herokuapp.com<CR><LF><CR><LF>
-
-//--
-AT+CIPSEND=74<CR><LF>
-
-GET /api/hello HTTP/1.1<CR><LF>Host: 192.168.0.102<CR><LF>Accept: application/json<CR><LF><CR><LF>
 
 
-GET /api/hello HTTP/1.1\r\nHost: 192.168.0.102\r\nAccept: application/json\r\n\r\n
+AT+CIPSEND=
 
-GET / HTTP/1.1\r\nHost: 127.0.0.1\r\nConnection:Keep-Alive\r\neep-Alive:timeout=1000, max=1000
+POST /enddev HTTP/1.1<CR><LF>
+Host: electricity-manager1.herokuapp.com<CR><LF>
+Content-Type: application/json<CR><LF>
+Content-Length: 51<CR><LF><CR><LF>
 
-GET / HTTP/1.1<CR><LF>Host: 127.0.0.1<CR><LF>Connection:Keep-Alive<CR><LF>Keep-Alive:timeout=100, max=100<CR><LF><CR><LF>
-
-
+{"id":"FA661234A511","rsw1s":"on","rsw2s":"on"}<CR><LF><CR><LF>
 Database:
 
 DB name elapp

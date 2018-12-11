@@ -122,23 +122,33 @@ function dai(res) {
 }
 
 // ENDDEV
+var response;
 app.post("/enddev", (req, res) => {
-  console.log("REQUEST TO ", req.route);
+  console.log("REQUEST TO ", req.route.path);
   console.log("Req Header ", req.headers);
   console.log("Body:", req.body);
+  // if (typeof response === "undefined") {
+  //   response = res;
+  // }
 
-  devices.push(req.body);
-  io.emit("change", req.body);
-  res.set("Content-Type", "text/plain");
+  var device = req.body;
+  device.res = res;
 
-  var num = 0;
-  var interv = setInterval(() => {
-    res.write("Hi for " + ++num + " time!");
-    if (num > 20) {
-      clearInterval(interv);
-    }
-  }, 1000);
-  res.write("Thanks!");
+  devices.add(device);
+
+  // device = req.body;
+  // device.res = res;
+
+  // devices.push(device);
+  // io.emit("change", req.body);
+
+  // var num = 0;
+  // var interv = setInterval(() => {
+  //   res.write("Hi for " + ++num + " time!");
+  //   if (num > 20) {
+  //     clearInterval(interv);
+  //   }
+  // }, 1000);
 });
 
 app.post("/api/world", (req, res) => {
@@ -170,7 +180,7 @@ server.on("connection", socket => {
     "Port: " + socket.address().port
   );
 
-  socket.setTimeout(10 * 1000);
+  socket.setTimeout(54 * 1000);
   socket.on("timeout", () => {
     console.log("socket timeout");
     socket.end();
