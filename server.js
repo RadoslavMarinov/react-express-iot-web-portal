@@ -180,7 +180,7 @@ server.on("connection", socket => {
     "Port: " + socket.address().port
   );
 
-  socket.setTimeout(54 * 1000);
+  socket.setTimeout(15 * 1000);
   socket.on("timeout", () => {
     console.log("socket timeout");
     socket.end();

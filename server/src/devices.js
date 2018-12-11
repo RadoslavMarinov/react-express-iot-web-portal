@@ -13,20 +13,16 @@ class Devices {
   add(dev) {
     if (typeof this.devs[dev.id] === "undefined") {
       this.devs[dev.id] = dev;
+      // REGISTE ON CLOSE EVENT LISTENER
       dev.res.on("close", () => {
         console.log("Connection for: " + dev.id + ", was closed");
-        clearInterval(this.devs[dev.id].beacont);
         delete this.devs[dev.id];
-        console.log(this.devs.length);
       });
-
-      this.devs[dev.id].beacont = setInterval(() => {
-        this.devs[dev.id].res.write("node alive");
-      }, 52 * 1000);
+    } else {
+      console.log("node alive: " + this.devs[dev.id].id);
+      this.devs[dev.id].res.write("ack\r\n");
     }
-    console.log(this.devs.length);
-    // dev.res.set("Content-Type", "text/plain");
-    dev.res.write("Hi for first time!");
+    dev.res.write("ack\r\n");
   }
 
   get devices() {
