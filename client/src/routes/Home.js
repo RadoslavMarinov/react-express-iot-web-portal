@@ -24,6 +24,8 @@ class Home extends Component {
       },
       body: '{"id": "FFAABBCC"}'
     });
+
+    console.log(res);
   }
 
   isAuthenticated = () => {
