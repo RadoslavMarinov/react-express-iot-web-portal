@@ -26,7 +26,7 @@ class Devices {
     }
     console.log(this.devs.length);
     // dev.res.set("Content-Type", "text/plain");
-    dev.res.write("OK");
+    dev.res.write("Hi for first time!");
   }
 
   get devices() {
