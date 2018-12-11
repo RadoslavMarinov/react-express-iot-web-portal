@@ -18,6 +18,8 @@ class Devices {
         console.log("Connection for: " + dev.id + ", was closed");
         delete this.devs[dev.id];
       });
+
+      dev.res.socket.on("data", data => console.log(data));
     } else {
       console.log("node alive: " + this.devs[dev.id].id);
       this.devs[dev.id].res.write("ack\r\n");
