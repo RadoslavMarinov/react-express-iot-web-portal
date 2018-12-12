@@ -127,18 +127,24 @@ app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route.path);
   console.log("Req Header ", req.headers);
   console.log("Body:", req.body);
+
+  res.write("ack\r\n");
+  setInterval(() => {
+    res.write("ack\r\n");
+  }, 2000);
+
   // if (typeof response === "undefined") {
   //   response = res;
   // }
 
-  var device = req.body;
-  device.res = res;
-  // // res.send();
+  // var device = req.body;
+  // device.res = res;
+  // // // res.send();
   // setInterval(() => {
   //   res.send("ack\r\n\r\n");
   // }, 2000);
 
-  devices.add(device);
+  // devices.add(device);
 
   // device = req.body;
   // device.res = res;
