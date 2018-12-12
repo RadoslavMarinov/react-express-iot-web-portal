@@ -14,15 +14,19 @@ class Devices {
     if (typeof this.devs[dev.id] === "undefined") {
       this.devs[dev.id] = dev;
       // REGISTE ON CLOSE EVENT LISTENER
+
+      setInterval(() => {
+        this.devs[dev.id].res.write("ack\r\n");
+      }, 2000);
+
       dev.res.on("close", () => {
         console.log("Connection for: " + dev.id + ", was closed");
         delete this.devs[dev.id];
       });
     } else {
       console.log("node alive: " + this.devs[dev.id].id);
-      this.devs[dev.id].res.send("ack\r\n");
     }
-    dev.res.send("ack\r\n");
+    dev.res.write("ack\r\n");
   }
 
   get devices() {
