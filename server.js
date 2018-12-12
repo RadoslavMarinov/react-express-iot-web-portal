@@ -133,8 +133,8 @@ app.post("/enddev", (req, res) => {
 
   var device = req.body;
   device.res = res;
-
-  devices.add(device);
+  res.send("ack\r\n\r\n");
+  // devices.add(device);
 
   // device = req.body;
   // device.res = res;

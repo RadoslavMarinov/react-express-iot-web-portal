@@ -1,13 +1,9 @@
 
 
-AT+CIPSEND=
+AT+CIPSEND=170<CR><LF>
 
-POST /enddev HTTP/1.1<CR><LF>
-Host: electricity-manager1.herokuapp.com<CR><LF>
-Content-Type: application/json<CR><LF>
-Content-Length: 51<CR><LF><CR><LF>
 
-{"id":"FA661234A511","rsw1s":"on","rsw2s":"on"}<CR><LF><CR><LF>
+POST /enddev HTTP/1.1<CR><LF>Host: electricity-manager1.herokuapp.com<CR><LF>Connection: Keep-Alive<CR><LF>Keep-Alive: timeout=50, max=1000<CR><LF>Content-Type: application/json<CR><LF>Content-Length: 51<CR><LF><CR><LF>{"id":"FA661234A511","rsw1s":"on","rsw2s":"on"}<CR><LF><CR><LF>
 Database:
 
 DB name elapp
