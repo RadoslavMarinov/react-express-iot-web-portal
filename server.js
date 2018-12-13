@@ -122,17 +122,19 @@ function dai(res) {
 }
 
 // ENDDEV
-var response;
+var socket;
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route.path);
   console.log("Req Header ", req.headers);
-  console.log("Body:", req.body);
+  socket = res.socket;
+  res.send("request\r\n");
 
-  res.write("ack\r\n");
+  // res.write();
   setInterval(() => {
-    res.write("ack\r\n");
+    socket.write("ack\r\n");
   }, 2000);
 
+  // console.log("Body:", req.body);
   // if (typeof response === "undefined") {
   //   response = res;
   // }

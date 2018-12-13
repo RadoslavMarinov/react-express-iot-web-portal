@@ -1,13 +1,13 @@
 class Devices {
   constructor() {
     this.devs = {};
-    setInterval(() => {
-      var count = 0;
-      for (var prop in this.devs) {
-        count++;
-      }
-      console.log("Props count: " + count);
-    }, 1500);
+    // setInterval(() => {
+    //   var count = 0;
+    //   for (var prop in this.devs) {
+    //     count++;
+    //   }
+    //   console.log("Props count: " + count);
+    // }, 1500);
   }
 
   add(dev) {
