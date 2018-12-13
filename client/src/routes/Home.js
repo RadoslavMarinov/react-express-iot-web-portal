@@ -20,7 +20,8 @@ class Home extends Component {
     const res = await fetch("/enddev", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        Connection: "Keep-Alive"
       },
       body: '{"id": "FFAABBCC"}'
     });
