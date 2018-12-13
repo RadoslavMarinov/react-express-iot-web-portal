@@ -130,9 +130,9 @@ app.post("/enddev", (req, res) => {
   res.send("request\r\n");
 
   // res.write();
-  setInterval(() => {
-    socket.write("ack\r\n");
-  }, 2000);
+  // setInterval(() => {
+  //   socket.write("ack\r\n");
+  // }, 2000);
 
   // console.log("Body:", req.body);
   // if (typeof response === "undefined") {
