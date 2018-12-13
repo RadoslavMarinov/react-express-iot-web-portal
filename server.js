@@ -120,49 +120,6 @@ function dai(res) {
     res.write('{"riko":"sonq"}\r\nJSON' + i++);
   }, 2000);
 }
-
-// ENDDEV
-var socket;
-app.post("/enddev", (req, res) => {
-  console.log("REQUEST TO ", req.route.path);
-  console.log("Req Header ", req.headers);
-  socket = res.socket;
-  res.send("request\r\n");
-
-  // res.write();
-  // setInterval(() => {
-  //   socket.write("ack\r\n");
-  // }, 2000);
-
-  // console.log("Body:", req.body);
-  // if (typeof response === "undefined") {
-  //   response = res;
-  // }
-
-  // var device = req.body;
-  // device.res = res;
-  // // // res.send();
-  // setInterval(() => {
-  //   res.send("ack\r\n\r\n");
-  // }, 2000);
-
-  // devices.add(device);
-
-  // device = req.body;
-  // device.res = res;
-
-  // devices.push(device);
-  // io.emit("change", req.body);
-
-  // var num = 0;
-  // var interv = setInterval(() => {
-  //   res.write("Hi for " + ++num + " time!");
-  //   if (num > 20) {
-  //     clearInterval(interv);
-  //   }
-  // }, 1000);
-});
-
 app.post("/api/world", (req, res) => {
   console.log(req.body);
   res.send(
@@ -174,16 +131,17 @@ app.get("/test", (req, res) => {
   res.send("Bravo Riko");
 });
 
-// PRODUCNTION :::
-if (process.env.NODE_ENV === "production") {
-  console.log("Node Env:", process.env.NODE_ENV);
-  // Serve any static files
-  app.use(express.static(path.join(__dirname, "client/build")));
-  // Handle React routing, return all requests to React app
-  app.get("*", function(req, res) {
-    res.sendFile(path.join(__dirname, "client/build", "index.html"));
-  });
-}
+// ENDDEV
+var socket;
+app.post("/enddev", (req, res) => {
+  console.log("REQUEST TO ", req.route.path);
+  console.log("Req Header ", req.headers);
+  socket = res.socket;
+  socket.setKeepAlive(true, 20 * 1000);
+
+  res.write("request\r\n");
+  res.end();
+});
 
 server.on("connection", socket => {
   console.log(
@@ -192,7 +150,7 @@ server.on("connection", socket => {
     "Port: " + socket.address().port
   );
 
-  socket.setTimeout(15 * 1000);
+  socket.setTimeout(20 * 1000);
   socket.on("timeout", () => {
     console.log("socket timeout");
     socket.end();
@@ -208,3 +166,13 @@ server.on("connection", socket => {
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
+// PRODUCNTION :::
+if (process.env.NODE_ENV === "production") {
+  console.log("Node Env:", process.env.NODE_ENV);
+  // Serve any static files
+  app.use(express.static(path.join(__dirname, "client/build")));
+  // Handle React routing, return all requests to React app
+  app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  });
+}
