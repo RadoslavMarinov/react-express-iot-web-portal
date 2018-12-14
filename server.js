@@ -132,15 +132,18 @@ app.get("/test", (req, res) => {
 });
 
 // ENDDEV
-var socket;
+setInterval(() => {
+  console.log(devices.deviceNumber());
+}, 1500);
+
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route.path);
   console.log("Req Header ", req.headers);
-  socket = res.socket;
-  socket.setKeepAlive(true, 20 * 1000);
+  res.socket.setKeepAlive(true, 50 * 1000);
 
-  res.write("request\r\n");
-  res.end();
+  var dev = req.body;
+  dev.res = res;
+  devices.add(dev);
 });
 
 server.on("connection", socket => {
@@ -150,11 +153,11 @@ server.on("connection", socket => {
     "Port: " + socket.address().port
   );
 
-  socket.setTimeout(20 * 1000);
-  socket.on("timeout", () => {
-    console.log("socket timeout");
-    socket.end();
-  });
+  // socket.setTimeout(10 * 1000);
+  // socket.on("timeout", () => {
+  //   console.log("socket timeout");
+  //   socket.end();
+  // });
 
   socket.on("close", hadError => {
     console.log(
