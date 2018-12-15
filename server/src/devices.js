@@ -15,8 +15,8 @@ class Devices {
       });
 
       setTimeout(() => {
-        this.devs[dev.id].res.write("update\r\n");
-      }, 8 * 1000);
+        this.devs[dev.id].res.write("upd\r\n");
+      }, 9 * 1000);
 
       dev.res.on("close", () => {
         console.log("Connection for: " + dev.id + ", was closed");

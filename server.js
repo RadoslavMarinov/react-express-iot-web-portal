@@ -13,7 +13,7 @@ const utils = require("./server/src/utils");
 const sessions = require("./server/src/sessions");
 const { devices } = require("./server/src/devices");
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 80;
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -131,20 +131,22 @@ app.get("/test", (req, res) => {
   res.send("Bravo Riko");
 });
 
-// ENDDEV
+// ENDDEV *****************************************************************************
+
 setInterval(() => {
   console.log(devices.deviceNumber());
-}, 1500);
+}, 1000);
 
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route.path);
   console.log("Req Header ", req.headers);
-  res.socket.setKeepAlive(true, 50 * 1000);
+  // res.socket.setKeepAlive(true, 50 * 1000);
 
   var dev = req.body;
   dev.res = res;
   devices.add(dev);
 });
+// ENDDEV *****************************************************************************
 
 server.on("connection", socket => {
   console.log(
@@ -153,11 +155,11 @@ server.on("connection", socket => {
     "Port: " + socket.address().port
   );
 
-  // socket.setTimeout(10 * 1000);
-  // socket.on("timeout", () => {
-  //   console.log("socket timeout");
-  //   socket.end();
-  // });
+  socket.setTimeout(10 * 1000);
+  socket.on("timeout", () => {
+    // console.log("socket timeout");
+    socket.end();
+  });
 
   socket.on("close", hadError => {
     console.log(
