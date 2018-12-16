@@ -144,6 +144,7 @@ app.post("/enddev", (req, res) => {
 
   var dev = req.body;
   dev.res = res;
+
   devices.add(dev);
 });
 // ENDDEV *****************************************************************************

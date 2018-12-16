@@ -1,30 +1,50 @@
 class Devices {
   constructor() {
     this.devs = {};
+    this.resolver = new Function();
+    this.resolver = this.resolver.bind(this);
   }
 
   add(dev) {
+    // var counter = 0;
+    // setInterval(() => {
+    //   console.log(++counter + ` seconds`);
+    // }, 1000);
+
     if (typeof this.devs[dev.id] === "undefined") {
-      this.devs[dev.id] = dev;
-      // REGISTE ON CLOSE EVENT LISTENER
-
-      dev.res.socket.setTimeout(10 * 1000);
-      dev.res.on("timeout", () => {
-        console.log("socket timeout");
-        dev.res.socket.end();
-      });
-
-      setTimeout(() => {
-        this.devs[dev.id].res.write("upd\r\n");
-      }, 9 * 1000);
-
-      dev.res.on("close", () => {
-        console.log("Connection for: " + dev.id + ", was closed");
-        delete this.devs[dev.id];
-      });
+      console.log(`New Device with ID: ${dev.id} has been added`);
     } else {
-      throw new Error("Cant add device that already exists!");
+      clearTimeout(this.devs[dev.id].connTimer);
+      console.log(`Device ${dev.id} Timeout timer cleared!`);
     }
+
+    dev.connTimer = setTimeout(() => {
+      var devId = this.devs[dev.id].id;
+      delete this.devs[dev.id];
+      console.log(`Device ${devId} is deleted!`);
+    }, 55 * 1000);
+
+    // REGISTE ON CLOSE EVENT LISTENER
+    dev.res.on("timeout", () => {
+      console.log("socket timeout");
+      dev.res.socket.end();
+    });
+
+    setTimeout(() => {
+      dev.res.write("upd\r\n");
+      dev.res.end();
+      dev.res.socket.end();
+      console.log("ËND");
+    }, 10 * 1000);
+
+    this.devs[dev.id] = dev;
+
+    // dev.res.on("close", () => {
+    //   console.log("Connection for: " + dev.id + ", was closed");
+    //   delete this.devs[dev.id];
+    //   this.resolver();
+    // });
+
     dev.res.write("ack\r\n");
   }
 
@@ -34,6 +54,12 @@ class Devices {
     } else {
       return true;
     }
+  }
+
+  waitSocketClose(resolver = this.resolver) {
+    return new Promise((resolve, reject) => {
+      resolver = resolve;
+    });
   }
 
   getDevices() {
