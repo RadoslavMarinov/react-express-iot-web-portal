@@ -25,25 +25,22 @@ class Devices {
     }, 55 * 1000);
 
     // REGISTE ON CLOSE EVENT LISTENER
-    dev.res.on("timeout", () => {
-      console.log("socket timeout");
-      dev.res.socket.end();
-    });
+    // dev.res.on("timeout", () => {
+    //   console.log("socket timeout");
+    //   dev.res.socket.end();
+    // });
 
     setTimeout(() => {
       dev.res.write("upd\r\n");
       dev.res.end();
-      dev.res.socket.end();
       console.log("ËND");
     }, 10 * 1000);
 
     this.devs[dev.id] = dev;
 
-    // dev.res.on("close", () => {
-    //   console.log("Connection for: " + dev.id + ", was closed");
-    //   delete this.devs[dev.id];
-    //   this.resolver();
-    // });
+    dev.res.on("close", () => {
+      dev.res.socket.end();
+    });
 
     dev.res.write("ack\r\n");
   }
