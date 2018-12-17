@@ -5,23 +5,27 @@ class Devices {
     this.resolver = this.resolver.bind(this);
   }
 
-  add(dev) {
-    // var counter = 0;
-    // setInterval(() => {
-    //   console.log(++counter + ` seconds`);
-    // }, 1000);
+  deleteDevice(devId, reason) {
+    clearTimeout(this.devs[devId].connTimer);
+    clearTimeout(this.devs[devId].deleteDeviceTo);
+    delete this.devs[devId];
+    console.log(
+      `Device ${devId} has been deleted due to ${
+        reason ? reason : "undefined reaason"
+      }`
+    );
+  }
 
+  add(dev) {
     if (typeof this.devs[dev.id] === "undefined") {
       console.log(`New Device with ID: ${dev.id} has been added`);
     } else {
+      clearTimeout(this.devs[dev.id].deleteDeviceTo);
       clearTimeout(this.devs[dev.id].connTimer);
-      console.log(`Device ${dev.id} Timeout timer cleared!`);
     }
 
     dev.connTimer = setTimeout(() => {
-      var devId = this.devs[dev.id].id;
-      delete this.devs[dev.id];
-      console.log(`Device ${devId} is deleted!`);
+      this.deleteDevice(dev.id, "connection timeout!");
     }, 55 * 1000);
 
     // REGISTE ON CLOSE EVENT LISTENER
@@ -31,18 +35,23 @@ class Devices {
     // });
 
     setTimeout(() => {
-      dev.res.write("upd\r\n");
-      dev.res.end();
-      console.log("ËND");
-    }, 10 * 1000);
+      dev.res.write("upd\r\n", () => {
+        dev.res.end();
+        dev.res.socket.end();
+        console.log("END");
+      });
+
+      dev.deleteDeviceTo = setTimeout(() => {
+        this.deleteDevice(dev.id, "Timeout after update signal!");
+      }, 3 * 1000);
+    }, 5 * 1000);
+
+    dev.res.on("finish", () => {
+      console.log("Res Data has been sent", dev.res.socket);
+    });
+    dev.res.write("ack\r\n");
 
     this.devs[dev.id] = dev;
-
-    dev.res.on("close", () => {
-      dev.res.socket.end();
-    });
-
-    dev.res.write("ack\r\n");
   }
 
   exists(dev) {

@@ -132,19 +132,27 @@ app.get("/test", (req, res) => {
 });
 
 // ENDDEV *****************************************************************************
-
-setInterval(() => {
-  console.log(devices.deviceNumber());
-}, 1000);
+var counter = 0;
 
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route.path);
   console.log("Req Header ", req.headers);
-  // res.socket.setKeepAlive(true, 50 * 1000);
+  // setInterval(() => {
+  //   console.log(++counter);
+  // }, 1000);
 
+  // setTimeout(() => {
+  //   res.write("upd\r\n", () => {
+  //     res.end();
+  //     res.socket.end();
+  //   });
+  // }, 1000);
+
+  // res.on("finish", () => {
+  //   console.log("Res socket: ", res.socket);
+  // });
   var dev = req.body;
   dev.res = res;
-
   devices.add(dev);
 });
 // ENDDEV *****************************************************************************
@@ -156,10 +164,13 @@ server.on("connection", socket => {
     "Port: " + socket.address().port
   );
 
-  socket.setTimeout(55 * 1000);
   socket.on("timeout", () => {
     console.log("socket timeout");
     socket.end();
+  });
+
+  socket.on("error", err => {
+    console.log("Socket error: ", err);
   });
 
   socket.on("close", hadError => {
