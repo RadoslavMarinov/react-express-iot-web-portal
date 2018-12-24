@@ -13,7 +13,7 @@ class App extends Component {
     return (
       <BrowserRouter>
         <Switch>
-          <Route exact path="/" render={props => <Home {...props} />} />
+          <Route exact path="/Home" render={props => <Home {...props} />} />
           <Route exact path="/login" render={props => <Login {...props} />} />
           <Route
             exact

@@ -1,12 +1,8 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import code from "jwt-simple";
-
 import NavBar from "../components/styled/NavBar";
 import { UserInput, Label, SubmitButt } from "../components/styled/Forms";
 import styled from "styled-components";
-
-const KEY = "taina";
 
 const FormWrapper = styled.div`
   padding: 10px;
@@ -21,15 +17,15 @@ class Login extends Component {
     this.state = {
       username: "",
       password: "",
-      toUser: false,
-      user: {}
+      info: "Test"
     };
   }
 
   submitForm = async e => {
     e.preventDefault();
-    const res = await fetch("/api/login/data", {
+    fetch("/login", {
       method: "POST",
+      redirect: "follow",
       headers: {
         "Content-Type": "application/json"
       },
@@ -37,46 +33,28 @@ class Login extends Component {
         username: this.state.username,
         password: this.state.password
       })
-    });
-    const resJson = await res.json();
-
-    if (resJson.status === "OK") {
-      localStorage.setItem("sessionId", code.encode(resJson, KEY));
-
-      this.setState({ toUser: true, user: resJson, fromLogin: true });
-    }
-
-    //   var sessionId = code.decode(localStorage.getItem("sessionId"), KEY);
-    //   console.log(sessionId);
-    // }
-
-    // if (resJson.status === "OK") {
-    //   var { session, devices } = resJson;
-    //   if (session) {
-    //     localStorage.setItem("sessionId", code.encode(session, KEY));
-    //   }
-
-    //   if (!devices) {
-    //     throw new Error("User must have devices registered! ");
-    //   }
-    //   console.log("devices: ", devices);
-    //   this.setState({ toUser: true, user: resJson });
-    // }
+    })
+      .then(async res => {
+        try {
+          var resjson = await res.json();
+          console.log(resjson);
+          this.setState({ info: resjson.message });
+        } catch (error) {
+          window.location.assign(res.url);
+        }
+      })
+      .catch(err => {
+        console.log(err);
+      });
   };
 
   onChange = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
 
-  render() {
-    if (this.state.toUser) {
-      return (
-        <Redirect
-          to={{ pathname: "/User", user: this.state.user, fromLogin: true }}
-        />
-      );
-    }
+  componentDidMount() {}
 
+  render() {
     return (
       <React.Fragment>
         <NavBar /> <h1>Hello from Login {this.props.location.msg}</h1>
@@ -99,6 +77,7 @@ class Login extends Component {
               onChange={this.onChange}
             />
             <SubmitButt onClick={this.submitForm}>Submasdasdit</SubmitButt>
+            <p>{this.state.info}</p>
           </Form>
         </FormWrapper>
       </React.Fragment>

@@ -72,8 +72,9 @@ async function findMany(collectionName, query) {
       } else {
         if (docs.length > 0) {
           resolve(docs);
+        } else {
+          resolve(false);
         }
-        resolve(false);
       }
     });
   });
@@ -112,8 +113,9 @@ async function insertDoc(collectionName, doc) {
     collection.insertMany(docs, function(err, result) {
       if (err) {
         reject(err);
+      } else {
+        resolve(result);
       }
-      resolve(result);
     });
   });
 }
@@ -162,25 +164,17 @@ async function removeDoc(collectionName, query) {
     await connectToDb();
   }
 
-  return new Promise(async (resolve, reject) => {
-    let collection = dataBase.collection(collectionName);
-    collection
-      .deleteOne(query)
-      .then(result => {
-        resolve(result);
-      })
-      .catch(err => {
-        reject(err);
-      });
-  });
+  let collection = dataBase.collection(collectionName);
+  return collection.deleteOne(query);
 }
 
 async function existsDoc(collection, query) {
   const result = await findMany(collection, query);
   if (result.length) {
     return true;
+  } else {
+    return false;
   }
-  return false;
 }
 
 module.exports = {

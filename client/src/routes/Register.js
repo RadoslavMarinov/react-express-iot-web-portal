@@ -65,7 +65,7 @@ class Register extends Component {
       this.setState({ info: "" });
     }
 
-    const res = await fetch("/api/register/data", {
+    const res = await fetch("/api/reg-data", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -80,7 +80,7 @@ class Register extends Component {
     const resJson = await res.json();
     //  const resData = await JSON.parse(res.body);
     console.log(JSON.stringify(resJson));
-    this.setState({ redirect: true });
+    // this.setState({ redirect: true });
   };
 
   handleChange = e => {

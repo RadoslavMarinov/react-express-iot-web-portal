@@ -16,7 +16,7 @@ class Devices {
     );
   }
 
-  add(dev) {
+  update(dev) {
     if (typeof this.devs[dev.id] === "undefined") {
       console.log(`New Device with ID: ${dev.id} has been added`);
     } else {

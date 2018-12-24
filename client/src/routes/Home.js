@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import NavBar from "../components/styled/NavBar";
 import code from "jwt-simple";
-import { socket } from "../components/socket-io";
 
 const KEY = "taina";
 
@@ -9,11 +8,6 @@ class Home extends Component {
   constructor(props) {
     super(props);
     this.state = { user: "", isAuthenticated: false, info: "" };
-
-    socket.on("change", data => {
-      // this.setState({ info: data });
-      console.log("NEW data: ", data);
-    });
   }
 
   async submit() {

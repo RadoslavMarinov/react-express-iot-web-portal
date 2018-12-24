@@ -1,34 +1,48 @@
+// ============ EXPRESS ===============
 const express = require("express");
-const code = require("jwt-simple");
-// const session = require("express-session");
-const bodyParser = require("body-parser");
-const path = require("path");
+const session = require("express-session");
 const app = express();
-
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
-
+// ============ PASPORT ===============
+var flash = require("connect-flash");
+// var passport = require("passport");
+// var Strategy = require("passport-local").Strategy;
+// var { ensureLoggedIn } = require("connect-ensure-login");
+// ============ DB ===============
 const db = require("./server/src/db/mongo");
+// ============ PROPRIETARY ===============
 const utils = require("./server/src/utils");
 const sessions = require("./server/src/sessions");
 const { devices } = require("./server/src/devices");
+const apiRoutes = require("./server/src/routes/api").routes;
 
-const port = process.env.PORT || 80;
+// ============ OTHERS ===============
+const colors = require("colors");
+const server = require("http").Server(app);
+const bodyParser = require("body-parser");
+const path = require("path");
+const { ensureLoggedIn, passport } = require("./server/src/passport");
+
+// ============ MIDLEWARE SETUP ===============
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(require("cookie-parser")());
+app.use(require("morgan")("combined"));
+// app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  session({ secret: "keyboard cat", resave: false, saveUninitialized: false })
+);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+//Routes
+app.use("/api", apiRoutes);
 
-// app.use(
-//   session({ secret: "rikotech-taina", resave: false, saveUninitialized: false })
-// );
+//======================================================================
+const port = process.env.PORT || 80;
+const CONF_nodeEnv = "production";
 
-// SOCKET
-io.on("connection", function(socket) {
-  console.log("Client connected", socket.client.id);
-  socket.emit("greeting", { Hello: 1 });
+db.findOne("devices", { id: "FA661234A5511" }).then(result => {
+  console.log(result);
 });
-// Test
-
-// API calls
 
 app.post("/api/user/get-data", async (req, res) => {
   var data = req.body;
@@ -56,139 +70,90 @@ app.post("/api/user/get-data", async (req, res) => {
   }
 });
 
-app.post("/api/login/data", async (req, res) => {
-  console.log(" POST : /api/login/data", req.body);
-  var user;
-  try {
-    user = await db.findOne("users", {
-      username: req.body.username,
-      password: req.body.password
-    });
-  } catch (error) {
-    console.log(error);
-    res.send({ status: "Database Error!" });
-  }
-
-  if (user) {
-    var resObj = {};
-
-    console.log("User", user);
-
-    resObj.status = "OK";
-    resObj.session = sessions.newSession();
-    resObj.user = user;
-
-    console.log("RSPONSE OBJ", resObj);
-    res.send(resObj);
-  } else {
-    res.send({ status: "User not found!" });
-  }
-});
-
-app.post("/api/register/data", async (req, res) => {
-  try {
-    var isValid = await utils.validateRegReques(req.body);
-    db.insertDoc("users", utils.constructUserObjectForDb(req.body))
-      .then(result => {
-        return db.removeDoc("devices", { deviceId: req.body.deviceId });
-      })
-      .then(async result => {
-        console.log("User is added !");
-        try {
-          var user = await db.findMany("users", {
-            username: req.body.username
-          });
-          userDevices = user[0].devices;
-          console.log("USER IS ", userDevices);
-          res.send(JSON.stringify({ devices: userDevices }));
-        } catch {
-          throw "User not findede";
-        }
-      })
-      .catch(err => {
-        throw err;
-      });
-  } catch (error) {
-    res.send(JSON.stringify({ error: error }));
-    console.log(error);
-  }
-});
-//  Todo Check username and password if exist !
-function dai(res) {
-  var i = 1;
-  setInterval(function() {
-    res.write('{"riko":"sonq"}\r\nJSON' + i++);
-  }, 2000);
-}
-app.post("/api/world", (req, res) => {
-  console.log(req.body);
-  res.send(
-    `I received your POST request. This is what you sent me: ${req.body.post}`
-  );
-});
-
-app.get("/test", (req, res) => {
-  res.send("Bravo Riko");
-});
-
 // ENDDEV *****************************************************************************
 var counter = 0;
 
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route.path);
   console.log("Req Header ", req.headers);
-  // setInterval(() => {
-  //   console.log(++counter);
-  // }, 1000);
 
-  // setTimeout(() => {
-  //   res.write("upd\r\n", () => {
-  //     res.end();
-  //     res.socket.end();
-  //   });
-  // }, 1000);
-
-  // res.on("finish", () => {
-  //   console.log("Res socket: ", res.socket);
-  // });
   var dev = req.body;
   dev.res = res;
-  devices.add(dev);
+  devices.update(dev);
 });
 // ENDDEV *****************************************************************************
 
 server.on("connection", socket => {
-  console.log(
-    "New connection",
-    "Address: " + socket.address().address,
-    "Port: " + socket.address().port
-  );
-
   socket.on("timeout", () => {
-    console.log("socket timeout");
+    // console.log("socket timeout");
     socket.end();
   });
-
   socket.on("error", err => {
-    console.log("Socket error: ", err);
+    // console.log("Socket error: ", err);
   });
-
   socket.on("close", hadError => {
-    console.log(
-      hadError
-        ? "Socket closed due to ERROR during transmission"
-        : "Socket closed"
-    );
+    // console.log(
+    //   hadError
+    //     ? "Socket closed due to ERROR during transmission"
+    //     : "Socket closed"
+    // );
   });
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
 // PRODUCNTION :::
-if (process.env.NODE_ENV === "production") {
+if (process.env.NODE_ENV === "production" || CONF_nodeEnv === "production") {
   console.log("Node Env:", process.env.NODE_ENV);
   // Serve any static files
-  app.use(express.static(path.join(__dirname, "client/build")));
   // Handle React routing, return all requests to React app
+  //
+  app.get("/", ensureLoggedIn("/Home"), function(req, res) {
+    // res.sendFile(path.join(__dirname, "client/build", "index.html"));
+
+    res.redirect("/User");
+  });
+  app.get("/User", ensureLoggedIn(), function(req, res) {
+    console.log(`User: ${JSON.stringify(req.user)}`);
+    // res.sendFile(path.join(__dirname, "client/build", "index.html"));
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  });
+
+  app.post(
+    "/Login",
+    checkCred,
+    passport.authenticate("local", {
+      failureRedirect: "/login",
+      failureFlash: true,
+      successFlash: "Bravo RIKO"
+    }),
+    (req, res) => {
+      console.log("Redirected to User ".red);
+      res.redirect("/User");
+    }
+  );
+
+  function checkCred(req, res, next) {
+    if (req.body.username === "riko" && req.body.password === "kote") {
+      next();
+    } else {
+      res.send(
+        JSON.stringify({ status: "error", message: "Invald creadentials" })
+      );
+    }
+  }
+
+  app.get("/Login", function(req, res) {
+    console.log("Flash Error:".red, JSON.stringify(req.flash()));
+    // console.log("Flash Error:".red, req.flash("message"));
+    res.sendFile(path.join(__dirname, "client/build", "index.html"));
+  });
+
+  app.get("/Logout", function(req, res) {
+    req.logout();
+    res.redirect("/");
+  });
+
+  app.use(express.static(path.join(__dirname, "client/build")));
   app.get("*", function(req, res) {
     res.sendFile(path.join(__dirname, "client/build", "index.html"));
   });
