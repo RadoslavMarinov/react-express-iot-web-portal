@@ -109,12 +109,12 @@ if (process.env.NODE_ENV === "production" || CONF_nodeEnv === "production") {
   //
   app.get("/", ensureLoggedIn("/Home"), function(req, res) {
     // res.sendFile(path.join(__dirname, "client/build", "index.html"));
-
+    console.log("Redirect to user:".red, req.user.green);
+    console.log(req.session.red);
     res.redirect("/User");
   });
   app.get("/User", ensureLoggedIn(), function(req, res) {
     console.log(`User: ${JSON.stringify(req.user)}`);
-    // res.sendFile(path.join(__dirname, "client/build", "index.html"));
     res.sendFile(path.join(__dirname, "client/build", "index.html"));
   });
 
@@ -124,23 +124,21 @@ if (process.env.NODE_ENV === "production" || CONF_nodeEnv === "production") {
     passport.authenticate("local", {
       failureRedirect: "/login",
       failureFlash: true,
-      successFlash: "Bravo RIKO"
+      successFlash: true
     }),
     (req, res) => {
-      console.log("Redirected to User ".red);
-      res.redirect("/User");
+      console.log("".red);
+      res.send(
+        JSON.stringify({
+          status: "ok",
+          message: "OK",
+          redirect: "/User",
+          user: req.user
+        })
+      );
+      // res.redirect("/User");
     }
   );
-
-  function checkCred(req, res, next) {
-    if (req.body.username === "riko" && req.body.password === "kote") {
-      next();
-    } else {
-      res.send(
-        JSON.stringify({ status: "error", message: "Invald creadentials" })
-      );
-    }
-  }
 
   app.get("/Login", function(req, res) {
     console.log("Flash Error:".red, JSON.stringify(req.flash()));
@@ -157,4 +155,35 @@ if (process.env.NODE_ENV === "production" || CONF_nodeEnv === "production") {
   app.get("*", function(req, res) {
     res.sendFile(path.join(__dirname, "client/build", "index.html"));
   });
+}
+
+async function checkCred(req, res, next) {
+  let { username } = req.body;
+  let { password } = req.body;
+  try {
+    var user = await db.findOne("users", { username: req.body.username });
+  } catch (error) {
+    res.send(
+      JSON.stringify({ status: "error", message: "Data Base fetch failed!" })
+    );
+  }
+  if (user) {
+    if (username === user.username && password === user.password) {
+      req.locals = {};
+      req.locals.user = user;
+      next();
+    } else {
+      console.log(`Password incorrect`.red);
+      res.send(
+        JSON.stringify({ status: "error", message: "Invald credentials" })
+      );
+    }
+  } else {
+    console.log(
+      `User with username ${username} does not exist in DataBase`.red
+    );
+    res.send(
+      JSON.stringify({ status: "error", message: "Invald credentials" })
+    );
+  }
 }

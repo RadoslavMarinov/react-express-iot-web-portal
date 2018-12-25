@@ -1,51 +1,48 @@
 // const express = require("express");
 // const app = express();
+const colors = require("colors");
 var passport = require("passport");
 var Strategy = require("passport-local").Strategy;
 var { ensureLoggedIn } = require("connect-ensure-login");
-var flash = require("connect-flash");
-
+var db = require("../src/db/mongo");
 //// ============ PASSPORT SETUP ===============
 
 passport.use(
-  new Strategy(function(username, password, cb) {
-    if (username !== "riko") {
-      // console.log("Incorrect User");
+  new Strategy(async function(username, password, cb) {
+    try {
+      var user = await db.findOne("users", { username: username });
+    } catch (error) {
+      return cb(error);
+    }
+
+    if (username !== user.username) {
       return cb(null, false, { message: "Icorrect user!" });
     }
-    if (password !== "kote") {
+    if (password !== user.password) {
       // console.log("Incorrect Password");
       return cb(null, false, { message: "Icorrect password!" });
     }
-    return cb(
-      null,
-      {
-        message: "Bravo riksan",
-        username: "riko",
-        passpord: "kote",
-        chemer: "memer"
-      },
-      {}
-    );
+    return cb(null, user, { message: "user lorem ipsum" });
   })
 );
 
+// may be the cookie itself represents the serialized 2nd param in cb()
 passport.serializeUser(function(user, cb) {
-  cb(null, user);
+  cb(null, user.username);
 });
 
-passport.deserializeUser(function(user, cb) {
-  if (user.username == "riko") {
+passport.deserializeUser(async function(username, cb) {
+  try {
+    var user = await db.findOne("users", { username: username });
+  } catch (error) {
+    return cb(error);
+  }
+
+  if (username === user.username) {
     return cb(null, user);
   } else {
-    return cb("Invalid user!");
+    return cb(`User with username: ${username}, doesn't exist in the database`);
   }
-  // db.users.findById(id, function(err, user) {
-  //   if (err) {
-  //     return cb(err);
-  //   }
-  //   cb(null, user);
-  // });
 });
 
 module.exports = {

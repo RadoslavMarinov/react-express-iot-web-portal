@@ -52,6 +52,7 @@ async function findOne(collectionName, query) {
         if (err) {
           reject(err);
         } else {
+          // console.log("DB RESULT :" + result);
           resolve(result);
         }
       });

@@ -1,8 +1,6 @@
 import React, { Component } from "react";
 import { Redirect } from "react-router-dom";
-import code from "jwt-simple";
 import Devices from "../components/Devices";
-const KEY = "taina";
 
 class User extends Component {
   constructor(props) {
@@ -10,32 +8,33 @@ class User extends Component {
     this.state = { user: true };
   }
 
-  printState = () => {
-    console.log("State Updated: " + this.state);
-  };
+  logout(e) {
+    console.log(e.target);
+    e.preventDefault();
+    localStorage.removeItem("user");
+    var res = fetch("/Logout", { method: "GET", redirect: "follow" })
+      .then(res => {
+        console.log("response status: " + res.status);
+        window.location.assign(res.url);
+      })
+      .catch(err => {
+        console.log("Error: " + err);
+      });
+  }
 
-  redirectHome = () => {
-    return <Redirect to={{ pathname: "/", from: "user" }} />;
-  };
+  getUser(tostring) {
+    var user = localStorage.getItem("user");
+    if (tostring) {
+      return JSON.stringify(user, null, 3);
+    } else {
+      return user;
+    }
+  }
 
-  populateDevices = devices => {
-    var litems = devices.map(dev => {
-      return (
-        <li>
-          Class: {dev.devClass} Endpoints:{" "}
-          {"[ " +
-            dev.endpoints.map(ep => {
-              return ep.name + "";
-            }) +
-            "]"}
-        </li>
-      );
-    });
-
-    return <ul>{litems}</ul>;
-  };
-
-  async componentDidMount() {}
+  async componentWillMount() {}
+  async componentDidMount() {
+    console.log(this.getUser(false));
+  }
 
   render() {
     if (!this.state.user) {
@@ -44,12 +43,14 @@ class User extends Component {
     return (
       <React.Fragment>
         <h1>{this.state.user.user ? this.state.user.username : "waiting"}</h1>
-        <a href="/Logout">Logout</a>
+        <a href="javascript:void(0)" onClick={this.logout}>
+          Logout
+        </a>
         <div>
           {this.state.user.user ? (
             <Devices devices={this.state.user.user.devices} />
           ) : (
-            <p>No user found</p>
+            <p>Alabama</p>
           )}
         </div>
       </React.Fragment>

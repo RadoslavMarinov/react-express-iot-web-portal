@@ -39,8 +39,12 @@ class Login extends Component {
           var resjson = await res.json();
           console.log(resjson);
           this.setState({ info: resjson.message });
+          if (resjson.user) {
+            localStorage.setItem("user", JSON.stringify(resjson.user));
+            window.location.assign(resjson.redirect);
+          }
         } catch (error) {
-          window.location.assign(res.url);
+          throw error;
         }
       })
       .catch(err => {
