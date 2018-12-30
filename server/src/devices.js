@@ -36,7 +36,7 @@ class Devices {
 
     setTimeout(() => {
       dev.res.write("upd\r\n", () => {
-        // dev.res.end();
+        dev.res.end();
         // dev.res.socket.end();
         console.log("END");
       });
