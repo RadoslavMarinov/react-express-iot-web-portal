@@ -13,7 +13,9 @@ const db = require("./server/src/db/mongo");
 const utils = require("./server/src/utils");
 const sessions = require("./server/src/sessions");
 const { devices } = require("./server/src/devices");
+// ============ ROUTES ===============
 const apiRoutes = require("./server/src/routes/api").routes;
+const userRoutes = require("./server/src/routes/user").routes;
 
 // ============ OTHERS ===============
 const colors = require("colors");
@@ -35,6 +37,7 @@ app.use(passport.session());
 app.use(flash());
 //Routes
 app.use("/api", apiRoutes);
+app.use("/user", userRoutes);
 
 //======================================================================
 const port = process.env.PORT || 80;
@@ -75,7 +78,7 @@ var counter = 0;
 
 app.post("/enddev", (req, res) => {
   console.log("REQUEST TO ", req.route.path);
-  console.log("Req Header ", req.headers);
+  console.log("Req Body ", req.body);
 
   var dev = req.body;
   dev.res = res;
@@ -86,17 +89,17 @@ app.post("/enddev", (req, res) => {
 server.on("connection", socket => {
   socket.on("timeout", () => {
     // console.log("socket timeout");
-    socket.end();
+    // socket.end();
   });
   socket.on("error", err => {
     // console.log("Socket error: ", err);
   });
   socket.on("close", hadError => {
-    // console.log(
-    //   hadError
-    //     ? "Socket closed due to ERROR during transmission"
-    //     : "Socket closed"
-    // );
+    console.log(
+      hadError
+        ? "Socket closed due to ERROR during transmission"
+        : "Socket closed"
+    );
   });
 });
 

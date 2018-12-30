@@ -25,7 +25,6 @@ passport.use(
     return cb(null, user, { message: "user lorem ipsum" });
   })
 );
-
 // may be the cookie itself represents the serialized 2nd param in cb()
 passport.serializeUser(function(user, cb) {
   cb(null, user.username);

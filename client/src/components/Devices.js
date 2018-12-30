@@ -17,7 +17,7 @@ class Devices extends Component {
   render() {
     return (
       <React.Fragment>
-        <StDevsCont>{this.populateDevices(this.props.devices)}</StDevsCont>
+        <StDevsCont>{this.populateDevices(this.props.devs)}</StDevsCont>
       </React.Fragment>
     );
   }

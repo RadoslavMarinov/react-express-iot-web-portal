@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Redirect } from "react-router-dom";
+// import { Redirect } from "react-router-dom";
 import NavBar from "../components/styled/NavBar";
 import { UserInput, Label, SubmitButt } from "../components/styled/Forms";
 import styled from "styled-components";

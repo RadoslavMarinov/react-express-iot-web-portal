@@ -36,14 +36,10 @@ class Devices {
 
     setTimeout(() => {
       dev.res.write("upd\r\n", () => {
-        dev.res.end();
-        dev.res.socket.end();
+        // dev.res.end();
+        // dev.res.socket.end();
         console.log("END");
       });
-
-      dev.deleteDeviceTo = setTimeout(() => {
-        this.deleteDevice(dev.id, "Timeout after update signal!");
-      }, 3 * 1000);
     }, 5 * 1000);
 
     dev.res.on("finish", () => {
