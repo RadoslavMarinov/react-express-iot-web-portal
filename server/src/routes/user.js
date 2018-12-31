@@ -18,6 +18,7 @@ routes.post("/ep", async (req, res) => {
 
   trySend(devices.getDeviceById(devId), msg)
     .then(result => {
+      result.end();
       res.send({ status: "ok" });
     })
     .catch(err => {
@@ -38,7 +39,7 @@ function trySend(dev, msg) {
       interv = setInterval(() => {
         if (send(dev, msg)) {
           clearInterval(interv);
-          resolve();
+          resolve(dev.res);
           return;
         } else if (cnt <= 0) {
           reject("timout");
