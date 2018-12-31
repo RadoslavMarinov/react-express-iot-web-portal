@@ -42,6 +42,7 @@ app.use("/user", userRoutes);
 //======================================================================
 const port = process.env.PORT || 80;
 const CONF_nodeEnv = "production";
+const SERVER_TIMOUT_MS = 20 * 1000;
 
 db.findOne("devices", { id: "FA661234A5511" }).then(result => {
   console.log(result);
@@ -86,21 +87,23 @@ app.post("/enddev", (req, res) => {
 });
 // ENDDEV *****************************************************************************
 
+server.setTimeout(SERVER_TIMOUT_MS);
+
 server.on("connection", socket => {
   socket.on("timeout", () => {
-    // console.log("socket timeout");
-    // socket.end();
+    console.log("server socket timeout");
+    socket.end();
   });
   socket.on("error", err => {
     // console.log("Socket error: ", err);
   });
-  socket.on("close", hadError => {
-    console.log(
-      hadError
-        ? "Socket closed due to ERROR during transmission"
-        : "Socket closed"
-    );
-  });
+  // socket.on("close", hadError => {
+  //   console.log(
+  //     hadError
+  //       ? "Socket closed due to ERROR during transmission"
+  //       : "Socket closed"
+  //   );
+  // });
 });
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
