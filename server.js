@@ -78,12 +78,10 @@ app.post("/api/user/get-data", async (req, res) => {
 var counter = 0;
 
 app.post("/enddev", (req, res) => {
-  console.log("REQUEST TO ", req.route.path);
-  console.log("Req Body ", req.body);
-
+  // console.log("REQUEST TO ", req.route.path);
+  // console.log("Req Body ", req.body);
   var dev = req.body;
-  dev.res = res;
-  devices.update(dev);
+  devices.update(dev, req, res);
 });
 // ENDDEV *****************************************************************************
 

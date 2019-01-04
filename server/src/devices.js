@@ -1,3 +1,7 @@
+const colors = require("colors");
+
+const UPDATE_TIMEOUT_MS = 5 * 1000;
+
 class Devices {
   constructor() {
     this.devs = {};
@@ -5,30 +9,34 @@ class Devices {
     this.resolver = this.resolver.bind(this);
 
     setInterval(() => {
-      console.log(this.deviceNumber());
+      console.log(this.deviceNumber(true));
     }, 1000);
   }
 
   deleteDeviceById(devId, reason) {
     try {
-      delete this.devs[devId];
+      clearTimeout(this.devs[devId].updateTimeout);
+      console.log(
+        `Device ${devId} has been deleted due to ${
+          reason ? reason : "undefined reaason"
+        }`.grey
+      );
+      this.devs[devId] = null;
     } catch (error) {
-      console.log("device is already deleted");
+      console.log(`device is already deleted. Error: ${error}`.red);
     }
-    console.log(
-      `Device ${devId} has been deleted due to ${
-        reason ? reason : "undefined reaason"
-      }`
-    );
   }
 
-  update(dev) {
-    // In case the client attempts to send another request while socket is open
-    if (typeof this.devs[dev.id] !== "undefined") {
-      console.log("Device already exists");
-      this.devs[dev.id].res.socket.end();
-      return;
-    }
+  update(device, req, res) {
+    var dev = device;
+
+    dev = this.devs[device.id] = dev;
+    dev.res = res;
+
+    dev.updateTimeout = setTimeout(() => {
+      console.log("UPDATE TIME".magenta);
+      res.end("upd\r\n");
+    }, UPDATE_TIMEOUT_MS);
 
     dev.res.socket.on("timeout", () => {
       console.log(`Device: ${dev.id} socket timeout`);
@@ -40,26 +48,11 @@ class Devices {
           reason ? "reason: " + reason : ""
         } reason ${reason}`
       );
-      this.deleteDeviceById(dev.id, "socket closed");
+      this.deleteDeviceById(device.id, "socket closed");
     });
 
-    setTimeout(() => {
-      console.log("Update vreme doide");
-      if (typeof this.devs[dev.id] === "undefined") {
-        return;
-      }
-      dev.res.write("upd\r\n", () => {
-        dev.res.end();
-        console.log("END");
-      });
-    }, 5 * 1000);
-
-    dev.res.on("finish", () => {
-      console.log("Res Data has been sent", dev.res.socket);
-    });
+    console.log(`THIS DEVICE IS : ${this.devs[device.id]}`.green);
     dev.res.write("ack\r\n");
-
-    this.devs[dev.id] = dev;
   }
 
   exists(dev) {
@@ -78,15 +71,19 @@ class Devices {
 
   getDeviceById(id) {
     if (typeof this.devs[id] === "undefined") {
+      console.log(`Device with id ${id}, not available`.red);
       return null;
     } else {
       return this.devs[id];
     }
   }
 
-  deviceNumber() {
+  deviceNumber(print) {
     var i = 0;
     for (let dev in this.devs) {
+      if (print) {
+        // console.log(this.devs[dev]);
+      }
       ++i;
     }
     return i;

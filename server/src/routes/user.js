@@ -19,6 +19,7 @@ routes.post("/ep", async (req, res) => {
   trySend(devices.getDeviceById(devId), msg)
     .then(result => {
       result.end();
+      // devices.deleteDeviceById(devId, `User terminates connection`);
       res.send({ status: "ok" });
     })
     .catch(err => {
@@ -33,7 +34,7 @@ function trySend(dev, msg) {
     var interv;
 
     if (send(dev, msg)) {
-      resolve();
+      resolve(dev.res);
       return;
     } else {
       interv = setInterval(() => {
