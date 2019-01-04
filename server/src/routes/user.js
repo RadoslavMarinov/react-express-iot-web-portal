@@ -19,7 +19,7 @@ routes.post("/ep", async (req, res) => {
   trySend(devices.getDeviceById(devId), msg)
     .then(result => {
       result.end();
-      // devices.deleteDeviceById(devId, `User terminates connection`);
+      // devices. deleteDeviceById(devId, `User terminates connection`);
       res.send({ status: "ok" });
     })
     .catch(err => {
