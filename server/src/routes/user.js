@@ -8,6 +8,7 @@ var { devices } = require("../devices");
 var utils = require("../utils");
 var db = require("../db/mongo");
 
+// ROUTE AT: /user/ep
 routes.post("/ep", async (req, res) => {
   console.log(`Request to ${req.url}`);
   console.log(`Body: ${JSON.stringify(req.body)}`);
@@ -16,23 +17,38 @@ routes.post("/ep", async (req, res) => {
   console.log(`Device Id: ${devId}`, `Message: ${JSON.stringify(msg)}`);
 
   trySend(devices.getDeviceById(devId), msg)
-    .then(deviceResponse => {
-      deviceResponse.end();
-      // devices. deleteDeviceById(devId, `User terminates connection`);
-      res.send({ status: "ok" });
+    .then(device => {
+      device.res.end();
+      // ==
+      return new Promise((resolve, reject) => {
+        var updateTimeout = setTimeout(() => {
+          reject({ status: "error", message: "Device unresponsive" });
+        }, 4 * 1000);
+
+        devices.deleteDeviceById(devId, "user request", {
+          resolve: resolve,
+          timeout: updateTimeout
+        });
+      });
+      // res.send({ status: "ok" });
+    })
+    .then(result => {
+      console.log(`Resolved: ${JSON.stringify(result)}`.blue);
+      res.send({ status: "ok", data: result });
     })
     .catch(err => {
-      console.log(`${err}`.red);
-      res.send({ status: "error" });
+      console.log(`${JSON.stringify(err)}`.red);
+      res.send({ status: "error", nessage: err });
     });
 });
 
+/* HELPERS */
 function trySend(dev, msg) {
   return new Promise((resolve, reject) => {
     var interv, timeout;
 
     if (send(dev, msg)) {
-      resolve(dev.res);
+      resolve(dev);
       return;
     } else {
       // Try several times
@@ -40,7 +56,7 @@ function trySend(dev, msg) {
         if (send(dev, msg)) {
           clearInterval(interv);
           clearTimeout(timeout);
-          resolve(dev.res);
+          resolve(dev);
           return;
         }
       }, TRY_INTERVAL_MS);

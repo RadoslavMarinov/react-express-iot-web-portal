@@ -22,13 +22,18 @@ class BinarySwitch extends Component {
       body: `{ "devId":"${this.props.dev.id}","msg":{"${key}" : ${this.level}}}`
     });
     const resJson = await res.json();
-    console.log(resJson);
+    //Find endpoint:
+    var ep = resJson.data.endpoints.find(x =>
+      x.hasOwnProperty(this.props.name)
+    );
+    console.log(ep[this.props.name].state);
+    this.setState({ level: ep[this.props.name].state });
   };
 
   render() {
     return (
       <button onClick={this.onClick} name={this.props.name}>
-        {this.props.displayName}
+        {this.props.displayName + " " + this.state.level}
       </button>
     );
   }

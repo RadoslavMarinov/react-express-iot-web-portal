@@ -13,7 +13,56 @@ class Devices {
     }, 1000);
   }
 
-  deleteDeviceById(devId, reason) {
+  /******************** UPDATE DEVICE *****************************/
+
+  update(device, req, res) {
+    // var dev = device;
+    this.handlePendingTasks(device);
+
+    this.devs[device.id] = {};
+
+    this.devs[device.id].id = device.id;
+    this.devs[device.id].reqBody = device;
+    this.devs[device.id].res = res;
+
+    if (this.devs[device.id].updateTimeout) {
+      throw new Error("Ovewriting device timeout");
+    }
+    this.devs[device.id].updateTimeout = setTimeout(() => {
+      console.log("UPDATE TIME".magenta);
+      res.end("upd\r\n");
+      this.deleteDeviceById(device.id, "Update timeout", null);
+    }, UPDATE_TIMEOUT_MS);
+
+    this.devs[device.id].res.socket.on("close", reason => {
+      console.log(
+        `Device: ${this.devs[device.id].id} socket closed ${
+          reason ? "reason: " + reason : ""
+        } reason ${reason}`
+      );
+      // this.deleteDeviceById(device.id, "socket closed");
+    });
+
+    this.devs[device.id].res.write("ack\r\n");
+  }
+
+  /*********************** HELPERS ********************/
+
+  handlePendingTasks(reqDev) {
+    // console.log(`${JSON.stringify(reqDev)}`);
+    var device = this.getDeviceById(reqDev.id);
+    if (device) {
+      if (device.timeout) {
+        clearTimeout(device.timeout);
+      }
+      if (device.resolve) {
+        device.resolve(reqDev);
+        console.log(`DEvice resolve`.rainbow);
+      }
+    }
+  }
+
+  deleteDeviceById(devId, reason, assignAfterDeletion) {
     try {
       clearTimeout(this.devs[devId].updateTimeout);
       console.log(
@@ -21,41 +70,19 @@ class Devices {
           reason ? reason : "undefined reaason"
         }`.grey
       );
-      this.devs[devId] = null;
+      this.devs[devId] = {};
+      if (assignAfterDeletion) {
+        var keys = Object.keys(assignAfterDeletion);
+        keys.map(key => {
+          this.devs[devId][key] = assignAfterDeletion[key];
+        });
+        console.log(
+          `Device ${devId} after deletion is ${this.devs[devId]}`.blue
+        );
+      }
     } catch (error) {
       console.log(`device is already deleted. Error: ${error}`.red);
     }
-  }
-
-  update(device, req, res) {
-    var dev = device;
-
-    dev = this.devs[device.id] = dev;
-    dev.res = res;
-
-    if (dev.updateTimeout) {
-      throw new Error("Ovewriting device timeout");
-    }
-    dev.updateTimeout = setTimeout(() => {
-      console.log("UPDATE TIME".magenta);
-      res.end("upd\r\n");
-    }, UPDATE_TIMEOUT_MS);
-
-    dev.res.socket.on("timeout", () => {
-      console.log(`Device: ${dev.id} socket timeout`);
-    });
-
-    dev.res.socket.on("close", reason => {
-      console.log(
-        `Device: ${dev.id} socket closed ${
-          reason ? "reason: " + reason : ""
-        } reason ${reason}`
-      );
-      this.deleteDeviceById(device.id, "socket closed");
-    });
-
-    console.log(`THIS DEVICE IS : ${this.devs[device.id]}`.green);
-    dev.res.write("ack\r\n");
   }
 
   exists(dev) {
@@ -73,11 +100,11 @@ class Devices {
   }
 
   getDeviceById(id) {
-    if (typeof this.devs[id] === "undefined") {
+    if (this.devs[id]) {
+      return this.devs[id];
+    } else {
       console.log(`Device with id ${id}, not available`.red);
       return null;
-    } else {
-      return this.devs[id];
     }
   }
 
@@ -87,7 +114,9 @@ class Devices {
       if (print) {
         // console.log(this.devs[dev]);
       }
-      ++i;
+      if (this.devs[dev] !== null && this.devs[dev]) {
+        ++i;
+      }
     }
     return i;
   }
