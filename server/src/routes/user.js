@@ -2,7 +2,6 @@ var express = require("express");
 const colors = require("colors");
 
 var routes = express.Router();
-const TRY_CNT = 6;
 const TRY_INTERVAL_MS = 500;
 
 var { devices } = require("../devices");
@@ -17,8 +16,8 @@ routes.post("/ep", async (req, res) => {
   console.log(`Device Id: ${devId}`, `Message: ${JSON.stringify(msg)}`);
 
   trySend(devices.getDeviceById(devId), msg)
-    .then(result => {
-      result.end();
+    .then(deviceResponse => {
+      deviceResponse.end();
       // devices. deleteDeviceById(devId, `User terminates connection`);
       res.send({ status: "ok" });
     })
@@ -30,25 +29,27 @@ routes.post("/ep", async (req, res) => {
 
 function trySend(dev, msg) {
   return new Promise((resolve, reject) => {
-    var cnt = TRY_CNT;
-    var interv;
+    var interv, timeout;
 
     if (send(dev, msg)) {
       resolve(dev.res);
       return;
     } else {
+      // Try several times
       interv = setInterval(() => {
         if (send(dev, msg)) {
           clearInterval(interv);
+          clearTimeout(timeout);
           resolve(dev.res);
           return;
-        } else if (cnt <= 0) {
-          reject("timout");
-        } else {
-          console.log(`Count: ${cnt}`);
-          cnt--;
         }
       }, TRY_INTERVAL_MS);
+      // If didnt work terminate trying
+      timeout = setTimeout(() => {
+        clearInterval(interv);
+        clearTimeout(timeout);
+        reject("Device unresponsive");
+      }, 4 * 1000);
     }
   });
 }

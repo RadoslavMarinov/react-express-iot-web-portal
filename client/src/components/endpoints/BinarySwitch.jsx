@@ -16,11 +16,13 @@ class BinarySwitch extends Component {
     var key = swName + "s"; //suffix 's' stands for "set" command
     console.log(`Name: ${swName}; Device ID: ${this.props.dev.id}`);
     this.level === 1 ? (this.level = 0) : (this.level = 1);
-    var res = fetch("/user/ep", {
+    const res = await fetch("/user/ep", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: `{ "devId":"${this.props.dev.id}","msg":{"${key}" : ${this.level}}}`
     });
+    const resJson = await res.json();
+    console.log(resJson);
   };
 
   render() {

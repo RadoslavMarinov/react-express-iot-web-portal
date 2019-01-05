@@ -33,6 +33,9 @@ class Devices {
     dev = this.devs[device.id] = dev;
     dev.res = res;
 
+    if (dev.updateTimeout) {
+      throw new Error("Ovewriting device timeout");
+    }
     dev.updateTimeout = setTimeout(() => {
       console.log("UPDATE TIME".magenta);
       res.end("upd\r\n");
