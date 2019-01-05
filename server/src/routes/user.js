@@ -38,7 +38,7 @@ routes.post("/ep", async (req, res) => {
     })
     .catch(err => {
       console.log(`${JSON.stringify(err)}`.red);
-      res.send({ status: "error", nessage: err });
+      res.send({ status: "error", message: err });
     });
 });
 
