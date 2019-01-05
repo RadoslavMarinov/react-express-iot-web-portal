@@ -3,7 +3,7 @@ import React, { Component } from "react";
 class BinarySwitch extends Component {
   constructor(props) {
     super(props);
-    this.state = { level: 1, disabled = false };
+    this.state = { level: 1, disabled: false };
     this.level = 1;
   }
 
@@ -14,7 +14,7 @@ class BinarySwitch extends Component {
       this: bs1s
     */
 
-    this.setState({disabled:true});
+    this.setState({ disabled: true });
 
     var key = swName + "s"; //suffix 's' stands for "set" command
     console.log(`Name: ${swName}; Device ID: ${this.props.dev.id}`);
@@ -26,7 +26,7 @@ class BinarySwitch extends Component {
     });
     const resJson = await res.json();
 
-    if (resJson.status == "ok") {
+    if (resJson.status === "ok") {
       var ep = resJson.data.endpoints.find(x =>
         x.hasOwnProperty(this.props.name)
       );
@@ -34,7 +34,7 @@ class BinarySwitch extends Component {
       this.setState({ level: ep[this.props.name].state, disabled: false });
     } else {
       console.log(resJson.status, resJson.message);
-      this.setState({disabled:false});
+      this.setState({ disabled: false });
     }
 
     //Find endpoint:
@@ -42,9 +42,12 @@ class BinarySwitch extends Component {
 
   render() {
     return (
-      <button onClick={this.onClick} name={this.props.name} 
-      disabled={this.state.disabled}>
-        {this.props.displayName + " " + this.state.level} 
+      <button
+        onClick={this.onClick}
+        name={this.props.name}
+        disabled={this.state.disabled}
+      >
+        {this.props.displayName + " " + this.state.level}
       </button>
     );
   }
