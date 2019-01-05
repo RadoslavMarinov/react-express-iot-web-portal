@@ -42,9 +42,9 @@ class BinarySwitch extends Component {
 
   render() {
     return (
-      <button onClick={this.onClick} name={this.props.name}>
-        {this.props.displayName + " " + this.state.level} disabled=
-        {this.state.disabled}
+      <button onClick={this.onClick} name={this.props.name} 
+      disabled={this.state.disabled}>
+        {this.props.displayName + " " + this.state.level} 
       </button>
     );
   }
