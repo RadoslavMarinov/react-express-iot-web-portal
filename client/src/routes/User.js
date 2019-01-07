@@ -53,10 +53,10 @@ class User extends Component {
       });
   }
 
-  getDeviceUpdateObject(dbUser) {
-    var { devices } = dbUser;
-    devices.map(dev => {});
-  }
+  // getDeviceUpdateObject(dbUser) {
+  //   var { devices } = dbUser;
+  //   devices.map(dev => {});
+  // }
 
   getUser(tostring) {
     var user = localStorage.getItem("user");
