@@ -16,70 +16,64 @@ routes.post("/ep", async (req, res) => {
   var { msg } = req.body;
   console.log(`Device Id: ${devId}`, `Message: ${JSON.stringify(msg)}`);
 
-  trySend(devices.getDeviceById(devId), msg)
-    .then(device => {
-      device.res.end();
-      // ==
-      return new Promise((resolve, reject) => {
-        var updateTimeout = setTimeout(() => {
-          reject({ status: "error", message: "Device unresponsive" });
-        }, 4 * 1000);
+  var device = devices.getDeviceById(devId);
 
-        devices.deleteDeviceById(devId, "user request", {
-          resolve: resolve,
-          timeout: updateTimeout
-        });
+  if (device) {
+    device
+      .sendMessage(JSON.stringify(msg))
+      .then(value => {
+        // console.log(value);
+        return device.getStation();
+      })
+      .then(val => {
+        res.send({ status: "ok", data: val });
+      })
+      .catch(err => {
+        console.log(`${err}`.red);
+        res.send({ status: "error", message: err });
       });
-      // res.send({ status: "ok" });
-    })
-    .then(result => {
-      console.log(`Resolved: ${JSON.stringify(result)}`.blue);
-      res.send({ status: "ok", data: result });
-    })
-    .catch(err => {
-      console.log(`${JSON.stringify(err)}`.red);
-      res.send({ status: "error", message: err });
-    });
+  } /* Device == null */ else {
+    res.send({ status: "error", message: "Device not found" });
+  }
+});
+
+/**ROUTE AT /user/devupd */
+routes.post("/devupd", async (req, res) => {
+  // console.log(`Request to ${req.url}`.yellow);
+  // console.log(`Body: ${JSON.stringify(req.body)}`.yellow);
+
+  var userDevices = req.body;
+
+  userDevices.map(async (dev, index) => {
+    // console.log(`User Device Endpoints: ${JSON.stringify(dev.endpoints)}`.blue);
+    var endDev = devices.getDeviceById(dev.id);
+    if (endDev) {
+      try {
+        var station = await endDev.getStation();
+        mergeEndponts(dev.endpoints, station.endpoints);
+        console.log(`${JSON.stringify(dev.endpoints)}`.green);
+      } catch (error) {
+        console.log(`${error}`.red);
+      }
+    } else {
+    }
+  });
 });
 
 /* HELPERS */
-function trySend(dev, msg) {
-  return new Promise((resolve, reject) => {
-    var interv, timeout;
 
-    if (send(dev, msg)) {
-      resolve(dev);
-      return;
-    } else {
-      // Try several times
-      interv = setInterval(() => {
-        if (send(dev, msg)) {
-          clearInterval(interv);
-          clearTimeout(timeout);
-          resolve(dev);
-          return;
-        }
-      }, TRY_INTERVAL_MS);
-      // If didnt work terminate trying
-      timeout = setTimeout(() => {
-        clearInterval(interv);
-        clearTimeout(timeout);
-        reject("Device unresponsive");
-      }, 4 * 1000);
-    }
+function mergeEndponts(userDevEps, stationEps) {
+  userDevEps.map(ep => {
+    var epName = ep.name;
+    // console.log(`user ep name: ${epName}`.green);
+    // console.log(`station Endpoints: ${JSON.stringify(stationEps)}`.green);
+    stationEp = stationEps.find(item => {
+      return item.hasOwnProperty(epName);
+    });
+    console.log(`station ep: ${stationEp}`.green);
+
+    ep = Object.assign(ep, stationEp[epName]);
   });
 }
 
-send = function(dev, msg) {
-  if (dev) {
-    try {
-      dev.res.write(JSON.stringify(msg));
-      return true;
-    } catch (error) {
-      throw new Error(`ERROR ******* ${error}`.red);
-    }
-  } else {
-    return false;
-  }
-};
 module.exports = { routes: routes };

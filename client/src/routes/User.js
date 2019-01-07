@@ -9,7 +9,15 @@ class User extends Component {
   }
 
   async componentDidMount() {
-    console.log(this.getUser(false));
+    var user = this.getUser(false);
+    var { devices } = user;
+    var res = await fetch("/user/devupd", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(devices)
+    });
+    var resJson = await res.json();
+    console.log(`${JSON.stringify(resJson)}`);
   }
 
   render() {
@@ -43,6 +51,11 @@ class User extends Component {
       .catch(err => {
         console.log("Error: " + err);
       });
+  }
+
+  getDeviceUpdateObject(dbUser) {
+    var { devices } = dbUser;
+    devices.map(dev => {});
   }
 
   getUser(tostring) {

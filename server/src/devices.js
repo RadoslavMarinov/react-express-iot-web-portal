@@ -1,4 +1,7 @@
+"use strict";
+
 const colors = require("colors");
+const Device = require(`./device`).Device;
 
 const UPDATE_TIMEOUT_MS = 5 * 1000;
 
@@ -9,41 +12,22 @@ class Devices {
     this.resolver = this.resolver.bind(this);
 
     setInterval(() => {
-      console.log(this.deviceNumber(true));
+      this.printDeviceInfo(true);
     }, 1000);
   }
 
   /******************** UPDATE DEVICE *****************************/
 
   update(device, req, res) {
-    // var dev = device;
-    this.handlePendingTasks(device);
-
-    this.devs[device.id] = {};
-
-    this.devs[device.id].id = device.id;
-    this.devs[device.id].reqBody = device;
-    this.devs[device.id].res = res;
-
-    if (this.devs[device.id].updateTimeout) {
-      throw new Error("Ovewriting device timeout");
+    if (!this.devs[device.id]) {
+      console.log(`New device ${device.id}`.blue);
+      this.devs[device.id] = new Device(device.id, device, res);
     }
-    this.devs[device.id].updateTimeout = setTimeout(() => {
-      console.log("UPDATE TIME".magenta);
-      res.end("upd\r\n");
-      this.deleteDeviceById(device.id, "Update timeout", null);
-    }, UPDATE_TIMEOUT_MS);
+    this.devs[device.id].update(device, res);
 
-    this.devs[device.id].res.socket.on("close", reason => {
-      console.log(
-        `Device: ${this.devs[device.id].id} socket closed ${
-          reason ? "reason: " + reason : ""
-        } reason ${reason}`
-      );
-      // this.deleteDeviceById(device.id, "socket closed");
-    });
+    // var dev = device;
 
-    this.devs[device.id].res.write("ack\r\n");
+    res.write("ack\r\n");
   }
 
   /*********************** HELPERS ********************/
@@ -108,17 +92,19 @@ class Devices {
     }
   }
 
-  deviceNumber(print) {
+  printDeviceInfo(print) {
     var i = 0;
     for (let dev in this.devs) {
+      var device = this.devs[dev];
       if (print) {
         // console.log(this.devs[dev]);
       }
       if (this.devs[dev] !== null && this.devs[dev]) {
-        ++i;
+        if (print) {
+          console.log(`${device.id}, State: ${device.state}`);
+        }
       }
     }
-    return i;
   }
 }
 
