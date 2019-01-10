@@ -44,25 +44,49 @@ routes.post("/devupd", async (req, res) => {
 
   var userDevices = req.body;
 
-  userDevices.map(async (dev, index) => {
-    // console.log(`User Device Endpoints: ${JSON.stringify(dev.endpoints)}`.blue);
-    var endDev = devices.getDeviceById(dev.id);
-    if (endDev) {
-      try {
-        var station = await endDev.getStation();
-        mergeEndponts(dev.endpoints, station.endpoints);
-        console.log(`${JSON.stringify(dev.endpoints)}`.green);
-      } catch (error) {
-        console.log(`${error}`.red);
+  var resObj = { status: "ok", message: null, data: [] };
+
+  Promise.all(
+    userDevices.map(async (dev, index) => {
+      // console.log(`User Device Endpoints: ${JSON.stringify(dev.endpoints)}`.blue);
+      var endDev = devices.getDeviceById(dev.id);
+      if (endDev) {
+        try {
+          var station = await endDev.getStation();
+          var merged = mergeEndponts(dev.endpoints, station.endpoints);
+          dev.devices = merged;
+          // console.log(`Merged: ${JSON.stringify(merged)}`.green);
+          return dev;
+        } catch (error) {
+          console.log(`${error}`.red);
+          dev.error = "device unreachable";
+          return dev;
+          // res.send({ status: "error", messsage: error });
+        }
+      } else {
+        dev.error = "device not installed";
+        return dev;
       }
-    } else {
-    }
-  });
+    })
+  )
+    .then(devices => {
+      console.log(`${JSON.stringify(devices)}`.red);
+      res.send({ status: "ok", data: devices });
+    })
+    .catch(err => {
+      res.send({ status: "error", message: err });
+    });
 });
 
 /* HELPERS */
 
+/**
+ *
+ * @param {detination object that is being changed after assignment} userDevEps
+ * @param {source object} stationEps
+ */
 function mergeEndponts(userDevEps, stationEps) {
+  var mergedDevs = [];
   userDevEps.map(ep => {
     var epName = ep.name;
     // console.log(`user ep name: ${epName}`.green);
@@ -70,10 +94,11 @@ function mergeEndponts(userDevEps, stationEps) {
     stationEp = stationEps.find(item => {
       return item.hasOwnProperty(epName);
     });
-    console.log(`station ep: ${stationEp}`.green);
-
-    ep = Object.assign(ep, stationEp[epName]);
+    // console.log(`station ep: ${stationEp}`.green);
+    var merged = Object.assign(ep, stationEp[epName]);
+    mergedDevs.push(merged);
   });
+  return mergedDevs;
 }
 
 module.exports = { routes: routes };

@@ -5,19 +5,24 @@ import Device from "./Device";
 class Devices extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { devs: [] };
   }
 
   populateDevices = devices => {
-    return devices.map(dev => {
-      return <Device device={dev} />;
+    return devices.map((dev, idx) => {
+      return <Device key={idx.toString()} device={dev} />;
     });
   };
+
+  componentWillReceiveProps(nextProps) {
+    console.log(nextProps);
+    this.setState({ devs: nextProps.devs });
+  }
 
   render() {
     return (
       <React.Fragment>
-        <StDevsCont>{this.populateDevices(this.props.devs)}</StDevsCont>
+        <StDevsCont>{this.populateDevices(this.state.devs)}</StDevsCont>
       </React.Fragment>
     );
   }

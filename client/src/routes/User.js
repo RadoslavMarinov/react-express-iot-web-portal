@@ -17,7 +17,12 @@ class User extends Component {
       body: JSON.stringify(devices)
     });
     var resJson = await res.json();
-    console.log(`${JSON.stringify(resJson)}`);
+    if (resJson.status === "ok") {
+      // console.log(`${JSON.stringify(resJson)}`);
+      // "resJson.data" is array of devices with updated properties
+      this.setState({ devs: resJson.data });
+    } else {
+    }
   }
 
   render() {
@@ -32,7 +37,7 @@ class User extends Component {
           loguyt
         </a>
         {/*eslint-enable */}
-        <Devices devs={this.getUser().devices} />
+        <Devices devs={this.state.devs} />
       </React.Fragment>
     );
   }

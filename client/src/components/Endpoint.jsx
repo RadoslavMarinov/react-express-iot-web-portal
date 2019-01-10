@@ -12,9 +12,10 @@ class Endpoint extends Component {
       case "binarySwitch": {
         return (
           <BinarySwitch
-            dev={this.props.dev}
             name={ep.name}
             displayName={ep.displayName}
+            level={ep.state}
+            onStateChange={this.props.onStateChange}
           />
         );
       }
