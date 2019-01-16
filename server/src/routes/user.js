@@ -9,6 +9,7 @@ var utils = require("../utils");
 var db = require("../db/mongo");
 
 // ROUTE AT: /user/ep
+/* Called when Endpoint state change and it sends post reques*/
 routes.post("/ep", async (req, res) => {
   console.log(`Request to ${req.url}`);
   console.log(`Body: ${JSON.stringify(req.body)}`);
@@ -37,18 +38,21 @@ routes.post("/ep", async (req, res) => {
   }
 });
 
-/**ROUTE AT /user/devupd */
+/**ROUTE AT /user/devupd
+ * Called when User page is loaded in order to update the state
+ * of the devices
+ */
 routes.post("/devupd", async (req, res) => {
   // console.log(`Request to ${req.url}`.yellow);
-  // console.log(`Body: ${JSON.stringify(req.body)}`.yellow);
+  console.log(`Body: ${JSON.stringify(req.body)}`.yellow);
 
-  var userDevices = req.body;
+  var { username } = req.body;
 
-  var resObj = { status: "ok", message: null, data: [] };
+  var dbUser = await db.findOne("users", { username: username });
+  console.log(`dbUser: ${JSON.stringify(dbUser)}`.yellow);
 
   Promise.all(
-    userDevices.map(async (dev, index) => {
-      // console.log(`User Device Endpoints: ${JSON.stringify(dev.endpoints)}`.blue);
+    dbUser.devices.map(async (dev, index) => {
       var endDev = devices.getDeviceById(dev.id);
       if (endDev) {
         try {
@@ -78,12 +82,74 @@ routes.post("/devupd", async (req, res) => {
     });
 });
 
+/**
+ *
+ */
+routes.post("/devEdit", async (req, res) => {
+  console.log(`${JSON.stringify(req.body)}`.green);
+
+  var { devId } = req.body;
+  var { endpoints } = req.body;
+
+  var dbUser = await db.findOne("users", { "devices.id": devId });
+  var dbDevice = dbUser.devices.find((dev, idx) => {
+    return dev.id === devId;
+  });
+
+  newEps = Object.assign(dbDevice.endpoints, endpoints);
+
+  console.log(`NEw EPS ${JSON.stringify(newEps)}`.red);
+
+  endpoints.map;
+
+  result = await db.updateField(
+    "users",
+    {
+      "devices.id": devId
+    },
+    { $set: { "devices.$[devEl].endpoints": newEps } },
+    { arrayFilters: [{ "devEl.id": devId }] }
+  );
+
+  console.log(`Db result: ${JSON.stringify(result)}`.blue);
+
+  // resa = await db.updateField(
+  // "users",
+  // {
+  //   "devices.id": devId
+  // },
+  //   {
+  //     $set: {
+  //       "devices.$[devEl].endpoints.$[epEl].displayName": "EEADSASDASD"
+  //     }
+  //   },
+  //   {
+  //     arrayFilters: [
+  //       { "devEl.id": "FA661234A511" },
+  //       { "epEl.displayName": "sw1DisplName" }
+  //     ]
+  //   }
+  // );
+
+  var responseObj = {};
+  if (result.ok === 1) {
+    responseObj.status = "ok";
+    if (result.nModified > 0) {
+      responseObj.message = `{"modified: " + result.nModified}`;
+    } else {
+      responseObj.message = `{"modified: 0"}`;
+    }
+    responseObj.data = { endpoints: newEps };
+  } else {
+    responseObj.status = "error";
+    responseObj.message = "DB Error";
+    responseObj.data = { endpoints: endpoints };
+  }
+  res.send(responseObj);
+});
 /* HELPERS */
 
 /**
- *
- * @param {detination object that is being changed after assignment} userDevEps
- * @param {source object} stationEps
  */
 function mergeEndponts(userDevEps, stationEps) {
   var mergedDevs = [];

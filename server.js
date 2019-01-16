@@ -129,7 +129,6 @@ if (process.env.NODE_ENV === "production" || CONF_nodeEnv === "production") {
       successFlash: true
     }),
     (req, res) => {
-      console.log("".red);
       res.send(
         JSON.stringify({
           status: "ok",

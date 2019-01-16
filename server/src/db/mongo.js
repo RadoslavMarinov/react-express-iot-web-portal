@@ -52,7 +52,6 @@ async function findOne(collectionName, query) {
         if (err) {
           reject(err);
         } else {
-          // console.log("DB RESULT :" + result);
           resolve(result);
         }
       });
@@ -82,13 +81,13 @@ async function findMany(collectionName, query) {
 }
 
 // Update field with new value
-async function updateField(collectionName, query, field, value) {
+async function updateField(collectionName, query, updateObj, options) {
   if (dataBase == false) {
     await connectToDb();
   }
   return new Promise(function(resolve, reject) {
     var collection = dataBase.collection(collectionName);
-    collection.updateOne(query, { $set: { [field]: value } }, (err, result) => {
+    collection.updateOne(query, updateObj, options, (err, result) => {
       if (err) {
         reject(err);
       } else {
@@ -97,7 +96,7 @@ async function updateField(collectionName, query, field, value) {
     });
   });
 }
-
+// { $set: { [field]: value } }
 async function insertDoc(collectionName, doc) {
   if (dataBase == false) {
     await connectToDb();

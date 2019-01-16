@@ -9,16 +9,17 @@ class User extends Component {
   }
 
   async componentDidMount() {
+    //Obtain user from localstorage
     var user = this.getUser(false);
-    var { devices } = user;
+
     var res = await fetch("/user/devupd", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(devices)
+      body: JSON.stringify(user)
     });
     var resJson = await res.json();
     if (resJson.status === "ok") {
-      // console.log(`${JSON.stringify(resJson)}`);
+      console.log(`${JSON.stringify(resJson)}`);
       // "resJson.data" is array of devices with updated properties
       this.setState({ devs: resJson.data });
     } else {
