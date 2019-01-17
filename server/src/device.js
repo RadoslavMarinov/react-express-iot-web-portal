@@ -57,7 +57,7 @@ class Device {
       return this.station;
     } catch (error) {
       //  console.log(`${error}`);
-      return error;
+      throw error;
     }
   }
 

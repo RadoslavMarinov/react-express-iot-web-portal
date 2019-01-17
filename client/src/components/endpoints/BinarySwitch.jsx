@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import { StBinSwitch } from "../styled/StlBinSwitch";
 
 class BinarySwitch extends Component {
   constructor(props) {
@@ -30,13 +31,15 @@ class BinarySwitch extends Component {
 
   render() {
     return (
-      <button
+      <StBinSwitch
+        bgColor={this.props.level ? "green" : null}
         onClick={this.onClick}
         name={this.props.name}
         disabled={this.state.disabled}
       >
-        {this.props.displayName + " " + this.props.level}
-      </button>
+        {this.props.displayName} <br />
+        {this.props.level ? "ON" : "OFF"}
+      </StBinSwitch>
     );
   }
 }

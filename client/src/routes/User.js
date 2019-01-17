@@ -19,7 +19,6 @@ class User extends Component {
     });
     var resJson = await res.json();
     if (resJson.status === "ok") {
-      console.log(`${JSON.stringify(resJson)}`);
       // "resJson.data" is array of devices with updated properties
       this.setState({ devs: resJson.data });
     } else {

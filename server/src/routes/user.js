@@ -86,33 +86,33 @@ routes.post("/devupd", async (req, res) => {
  *
  */
 routes.post("/devEdit", async (req, res) => {
-  console.log(`${JSON.stringify(req.body)}`.green);
+  // console.log(`${JSON.stringify(req.body)}`.green);
 
-  var { devId } = req.body;
-  var { endpoints } = req.body;
+  var { device } = req.body;
+  var devId = device.id;
+  console.log(`Body ${JSON.stringify(req.body)}`.green);
+  console.log(`Body ${devId}`.grey);
 
-  var dbUser = await db.findOne("users", { "devices.id": devId });
-  var dbDevice = dbUser.devices.find((dev, idx) => {
-    return dev.id === devId;
-  });
+  // var dbUser = await db.findOne("users", {
+  //   "devices.id": devId
+  // });
 
-  newEps = Object.assign(dbDevice.endpoints, endpoints);
+  // var dbUser = await db.findOne("users", {
+  //   devices: { $elemMatch: { id: devId } }
+  // });
 
-  console.log(`NEw EPS ${JSON.stringify(newEps)}`.red);
-
-  endpoints.map;
+  // console.log(`User found: ${JSON.stringify(dbUser)}`.blue);
+  // newEps = Object.assign(dbDevice.endpoints, endpoints);
 
   result = await db.updateField(
     "users",
     {
       "devices.id": devId
     },
-    { $set: { "devices.$[devEl].endpoints": newEps } },
+    { $set: { "devices.$[devEl]": device } },
     { arrayFilters: [{ "devEl.id": devId }] }
   );
-
-  console.log(`Db result: ${JSON.stringify(result)}`.blue);
-
+  console.log(`User found: ${JSON.stringify(result)}`.blue);
   // resa = await db.updateField(
   // "users",
   // {
@@ -135,15 +135,15 @@ routes.post("/devEdit", async (req, res) => {
   if (result.ok === 1) {
     responseObj.status = "ok";
     if (result.nModified > 0) {
-      responseObj.message = `{"modified: " + result.nModified}`;
+      responseObj.message = `{"modified: ${result.nModified}}`;
     } else {
       responseObj.message = `{"modified: 0"}`;
     }
-    responseObj.data = { endpoints: newEps };
+    responseObj.data = { device: device };
   } else {
     responseObj.status = "error";
     responseObj.message = "DB Error";
-    responseObj.data = { endpoints: endpoints };
+    responseObj.data = { device: device };
   }
   res.send(responseObj);
 });

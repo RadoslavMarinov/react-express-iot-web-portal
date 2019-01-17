@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const StDevsCont = styled.div`
   display: block;
-  background-color: aqua;
+  background-color: rgba(0, 0, 0, 0.01);
 `;
 
 export { StDevsCont };

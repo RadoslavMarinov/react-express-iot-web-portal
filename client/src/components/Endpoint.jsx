@@ -20,13 +20,13 @@ class Endpoint extends Component {
         );
       }
       default: {
-        return <p>{"Class not recognized"}</p>;
+        return <p>{"ERROR: Class not recognized"}</p>;
       }
     }
   }
 
   render() {
-    return <div>{this.getEp(this.props.ep)}</div>;
+    return <React.Fragment>{this.getEp(this.props.ep)}</React.Fragment>;
   }
 }
 
