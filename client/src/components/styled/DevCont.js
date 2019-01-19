@@ -7,6 +7,7 @@ const StDevCont = styled.div`
   border-width: 1px;
   border-color: rgba(0, 0, 0, 0.1);
   border-radius: 5px;
+  margin-top: 5px;
 `;
 
 export { StDevCont };

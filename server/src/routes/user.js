@@ -1,6 +1,6 @@
 var express = require("express");
 const colors = require("colors");
-
+const { ensureLoggedIn } = require("../passport");
 var routes = express.Router();
 const TRY_INTERVAL_MS = 500;
 
@@ -43,9 +43,6 @@ routes.post("/ep", async (req, res) => {
  * of the devices
  */
 routes.post("/devupd", async (req, res) => {
-  // console.log(`Request to ${req.url}`.yellow);
-  console.log(`Body: ${JSON.stringify(req.body)}`.yellow);
-
   var { username } = req.body;
 
   var dbUser = await db.findOne("users", { username: username });
@@ -63,12 +60,12 @@ routes.post("/devupd", async (req, res) => {
           return dev;
         } catch (error) {
           console.log(`${error}`.red);
-          dev.error = "device unreachable";
+          // dev.error = "device unreachable";
           return dev;
           // res.send({ status: "error", messsage: error });
         }
       } else {
-        dev.error = "device not installed";
+        // dev.error = "device not installed";
         return dev;
       }
     })
@@ -147,6 +144,57 @@ routes.post("/devEdit", async (req, res) => {
   }
   res.send(responseObj);
 });
+// "/user/isLoggedIn"
+routes.get("/isLoggedIn", ensureLoggedIn("/Home"), async (req, res) => {
+  res.send({ status: "ok" });
+});
+
+routes.post("/registerDevice", ensureLoggedIn("/Home"), async (req, res) => {
+  // res.send({ status: "ok" });
+  // console.log(`${JSON.stringify(req.body)}`.red);
+  try {
+    var devId = req.body.deviceId;
+    console.log(`Body ::: ${JSON.stringify(devId)}`.blue);
+
+    var existsInUsers = await utils.dbExistDevice("users", devId);
+
+    if (existsInUsers) {
+      res.send({
+        status: "error",
+        message: "Device with this ID is already registerd"
+      });
+      return;
+    }
+
+    var devsDevice = await db.findOne("devices", {
+      id: devId
+    });
+
+    if (!devsDevice) {
+      res.send({
+        status: "error",
+        message: "Device with this ID doesn't exist"
+      });
+      return;
+    }
+
+    await utils.appendDevice(req.user.id, devsDevice);
+    await db.removeDoc("devices", { id: devId });
+
+    res.send({ status: "ok", message: "no message :)" });
+    // dbDevice.devices = [];
+    // var device = await utils.validateRegReques(req.body);
+    // dbDevice.devices.push(device);
+
+    // await db.insertDoc("users", dbDevice);
+    // res.send(JSON.stringify({ status: "success", message: "" }));
+    // //-----------------
+  } catch (error) {
+    res.send(JSON.stringify({ status: "error", message: error }));
+    console.log(error);
+  }
+});
+
 /* HELPERS */
 
 /**

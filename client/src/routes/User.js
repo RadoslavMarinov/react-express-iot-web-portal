@@ -1,11 +1,16 @@
 import React, { Component } from "react";
-// import { Redirect } from "react-router-dom";
+import { Redirect } from "react-router-dom";
 import Devices from "../components/Devices";
+import { StlAddDevBtn } from "../components/styled/StlAddDevBtn";
+import { StUser } from "../components/styled/StUser";
+import { StAnchor } from "../components/styled/StAnchor";
+
+import { UserCtrBtns } from "../components/styled/UserCtrBtns";
 
 class User extends Component {
   constructor(props) {
     super(props);
-    this.state = { devs: [] };
+    this.state = { devs: [], redirUser: false };
   }
 
   async componentDidMount() {
@@ -30,21 +35,36 @@ class User extends Component {
     //   return this.redirectHome();
     // }
     return (
-      <React.Fragment>
-        <h1>{"waiting"}</h1>
-        {/*eslint-disable */}
-        <a href="" onClick={this.logout}>
-          loguyt
-        </a>
-        {/*eslint-enable */}
-        <Devices devs={this.state.devs} />
-      </React.Fragment>
+      <div>
+        {this.renderRedirect()}
+        <StUser>
+          <h1>{"waiting"}</h1>
+          {/*eslint-disable */}
+          <UserCtrBtns>
+            <StlAddDevBtn onClick={this.addNewDevice}>Add Device</StlAddDevBtn>
+            <StAnchor href="" onClick={this.logout}>
+              Logout
+            </StAnchor>
+            {/*eslint-enable */}
+          </UserCtrBtns>
+          <Devices devs={this.state.devs} />
+        </StUser>
+      </div>
     );
   }
 
   updateState() {}
 
-  logout(e) {
+  renderRedirect = () => {
+    if (this.state.redirUser) {
+      return <Redirect to="/AddNewDevice" />;
+    }
+  };
+
+  addNewDevice = e => {
+    this.setState({ redirUser: true });
+  };
+  logout = e => {
     console.log(e.target);
     e.preventDefault();
     localStorage.removeItem("user");
@@ -56,7 +76,7 @@ class User extends Component {
       .catch(err => {
         console.log("Error: " + err);
       });
-  }
+  };
 
   // getDeviceUpdateObject(dbUser) {
   //   var { devices } = dbUser;

@@ -56,8 +56,45 @@ function validateRegReques(reqBody) {
   });
 }
 
+async function dbExistDevice(collName, devId) {
+  switch (collName) {
+    case "users":
+      db.findOne(collName, {
+        "devices.id": devId
+      }).then(dev => {
+        if (dev) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      break;
+    case "devices":
+      db.findOne(collName, {
+        id: devId
+      }).then(dev => {
+        if (dev) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+      break;
+  }
+}
+
+async function appendDevice(userId, device) {
+  return db.updateField(
+    "users",
+    { id: userId },
+    { $push: { devices: device } }
+  );
+}
+
 module.exports = {
   constructUserObjectForDb: constructUserObjectForDb,
   validateRegReques: validateRegReques,
-  addUserSession: addUserSession
+  addUserSession: addUserSession,
+  dbExistDevice: dbExistDevice,
+  appendDevice: appendDevice
 };

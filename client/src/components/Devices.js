@@ -20,11 +20,7 @@ class Devices extends Component {
   }
 
   render() {
-    return (
-      <React.Fragment>
-        <StDevsCont>{this.populateDevices(this.state.devs)}</StDevsCont>
-      </React.Fragment>
-    );
+    return <StDevsCont>{this.populateDevices(this.state.devs)}</StDevsCont>;
   }
 }
 
