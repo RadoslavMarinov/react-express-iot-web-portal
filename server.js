@@ -107,7 +107,7 @@ server.listen(port, () => console.log(`Listening on port ${port}`));
 if (process.env.NODE_ENV === "production" || CONF_nodeEnv === "production") {
   console.log("Node Env:", process.env.NODE_ENV);
   // Serve any static files
-  // Handle React routing, return all requests to React app
+  // Handle React routing, return all requests to React app asd
   //
   app.get("/", ensureLoggedIn("/Home"), function(req, res) {
     // res.sendFile(path.join(__dirname, "client/build", "index.html"));
