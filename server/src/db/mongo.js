@@ -8,7 +8,8 @@ var collections = ["users"];
 var dataBase = false;
 var dbClient = false;
 
-function connectToDb() {
+function 
+connectToDb() {
   return new Promise((resolve, reject) => {
     MongoClient.connect(
       url,
@@ -18,7 +19,7 @@ function connectToDb() {
         console.log("Data Base Connected!");
         dataBase = client.db(dbName);
         dbClient = client;
-        resolve("1");
+        resolve(dataBase);
       })
       .catch(err => {
         console.log(err);
@@ -177,6 +178,14 @@ async function existsDoc(collection, query) {
   }
 }
 
+async function getDb(){
+  if(!dataBase){
+    return await connectToDb();
+  } else {
+    return dataBase;
+  }
+}
+
 module.exports = {
   findMany: findMany,
   findOne: findOne,
@@ -185,7 +194,8 @@ module.exports = {
   existsDoc: existsDoc,
   removeDoc: removeDoc,
   appendkeyValue: appendkeyValue,
-  appendOneToArray: appendOneToArray
+  appendOneToArray: appendOneToArray,
+  getDb: getDb
 };
 
 async function connectDb() {

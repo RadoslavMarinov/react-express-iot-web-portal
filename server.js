@@ -1,17 +1,13 @@
 // ============ EXPRESS ===============
 const express = require("express");
 const session = require("express-session");
+const MongoStore = require('connect-mongo')(session);
 const app = express();
 // ============ PASPORT ===============
 var flash = require("connect-flash");
-// var passport = require("passport");
-// var Strategy = require("passport-local").Strategy;
-// var { ensureLoggedIn } = require("connect-ensure-login");
 // ============ DB ===============
 const db = require("./server/src/db/mongo");
 // ============ PROPRIETARY ===============
-const utils = require("./server/src/utils");
-const sessions = require("./server/src/sessions");
 const { devices } = require("./server/src/devices");
 // ============ ROUTES ===============
 const apiRoutes = require("./server/src/routes/api").routes;
@@ -29,8 +25,9 @@ app.use(bodyParser.json());
 app.use(require("cookie-parser")());
 app.use(require("morgan")("combined"));
 // app.use(bodyParser.urlencoded({ extended: true }));
+// 
 app.use(
-  session({ secret: "keyboard cat", resave: false, saveUninitialized: false })
+  session({ store: new MongoStore({ dbPromise: db.getDb() }), secret: "keyboard cat",  resave: false, saveUninitialized: false })
 );
 app.use(passport.initialize());
 app.use(passport.session());
@@ -48,31 +45,32 @@ db.findOne("devices", { id: "FA661234A5511" }).then(result => {
   console.log(result);
 });
 
-app.post("/api/user/get-data", async (req, res) => {
-  var data = req.body;
-  console.log("DATA", data);
-  try {
-    var dbUser = await db.findOne("users", { username: req.body.username });
-  } catch (error) {
-    res.send({ status: "Failed to find the user!" });
-    throw new Error(error);
-  }
-  if (dbUser) {
-    try {
-      var session = await sessions.newSession(dbUser);
-    } catch (error) {
-      res.send({ status: "failed to update the session" });
-    }
-    // console.log("dbUser", dbUser);
-    var response = {
-      status: "OK",
-      session: session,
-      user: dbUser
-    };
-    console.log("Response", response);
-    res.send(response);
-  }
-});
+
+// app.post("/api/user/get-data", async (req, res) => {
+//   var data = req.body;
+//   console.log("DATA", data);
+//   try {
+//     var dbUser = await db.findOne("users", { username: req.body.username });
+//   } catch (error) {
+//     res.send({ status: "Failed to find the user!" });
+//     throw new Error(error);
+//   }
+//   if (dbUser) {
+//     try {
+//       var session = await sessions.newSession(dbUser);
+//     } catch (error) {
+//       res.send({ status: "failed to update the session" });
+//     }
+//     // console.log("dbUser", dbUser);
+//     var response = {
+//       status: "OK",
+//       session: session,
+//       user: dbUser
+//     };
+//     console.log("Response", response);
+//     res.send(response);
+//   }
+// });
 
 // ENDDEV *****************************************************************************
 var counter = 0;
