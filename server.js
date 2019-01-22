@@ -27,7 +27,7 @@ app.use(require("morgan")("combined"));
 // app.use(bodyParser.urlencoded({ extended: true }));
 // 
 app.use(
-  session({ store: new MongoStore({ dbPromise: db.getDb() }), secret: "keyboard cat",  resave: false, saveUninitialized: false })
+  session({ store: new MongoStore({ dbPromise: db.getDb(),ttl: 5 * 24 * 3600/* In seconds */, touchAfter: 24 * 3600/* In seconds */ }), secret: "keyboard cat",  resave: false, saveUninitialized: false })
 );
 app.use(passport.initialize());
 app.use(passport.session());
