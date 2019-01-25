@@ -1,7 +1,7 @@
 // ============ EXPRESS ===============
 const express = require("express");
 const session = require("express-session");
-const MongoStore = require('connect-mongo')(session);
+const MongoStore = require("connect-mongo")(session);
 const app = express();
 // ============ PASPORT ===============
 var flash = require("connect-flash");
@@ -25,9 +25,18 @@ app.use(bodyParser.json());
 app.use(require("cookie-parser")());
 app.use(require("morgan")("combined"));
 // app.use(bodyParser.urlencoded({ extended: true }));
-// 
+//
 app.use(
-  session({ store: new MongoStore({ dbPromise: db.getDb(),ttl: 5 * 24 * 3600/* In seconds */, touchAfter: 24 * 3600/* In seconds */ }), secret: "keyboard cat",  resave: false, saveUninitialized: false })
+  session({
+    store: new MongoStore({
+      dbPromise: db.getDb(),
+      ttl: 5 * 24 * 3600 /* In seconds */,
+      touchAfter: 24 * 3600 /* In seconds */
+    }),
+    secret: "keyboard cat",
+    resave: false,
+    saveUninitialized: false
+  })
 );
 app.use(passport.initialize());
 app.use(passport.session());
@@ -39,38 +48,11 @@ app.use("/user", userRoutes);
 //======================================================================
 const port = process.env.PORT || 80;
 const CONF_nodeEnv = "production";
-const SERVER_TIMOUT_MS = 20 * 1000;
+const SERVER_TIMOUT_MS = 50 * 1000;
 
 db.findOne("devices", { id: "FA661234A5511" }).then(result => {
   console.log(result);
 });
-
-
-// app.post("/api/user/get-data", async (req, res) => {
-//   var data = req.body;
-//   console.log("DATA", data);
-//   try {
-//     var dbUser = await db.findOne("users", { username: req.body.username });
-//   } catch (error) {
-//     res.send({ status: "Failed to find the user!" });
-//     throw new Error(error);
-//   }
-//   if (dbUser) {
-//     try {
-//       var session = await sessions.newSession(dbUser);
-//     } catch (error) {
-//       res.send({ status: "failed to update the session" });
-//     }
-//     // console.log("dbUser", dbUser);
-//     var response = {
-//       status: "OK",
-//       session: session,
-//       user: dbUser
-//     };
-//     console.log("Response", response);
-//     res.send(response);
-//   }
-// });
 
 // ENDDEV *****************************************************************************
 var counter = 0;
@@ -162,9 +144,7 @@ async function checkCred(req, res, next) {
   try {
     var user = await db.findOne("users", { username: req.body.username });
   } catch (error) {
-    res.send(
-      JSON.stringify({ status: "error", message: "Data Base fetch failed!" })
-    );
+    res.send(JSON.stringify({ status: "error", message: "Data Base fetch failed!" }));
   }
   if (user) {
     if (username === user.username && password === user.password) {
@@ -173,16 +153,10 @@ async function checkCred(req, res, next) {
       next();
     } else {
       console.log(`Password incorrect`.red);
-      res.send(
-        JSON.stringify({ status: "error", message: "Invald credentials" })
-      );
+      res.send(JSON.stringify({ status: "error", message: "Invald credentials" }));
     }
   } else {
-    console.log(
-      `User with username ${username} does not exist in DataBase`.red
-    );
-    res.send(
-      JSON.stringify({ status: "error", message: "Invald credentials" })
-    );
+    console.log(`User with username ${username} does not exist in DataBase`.red);
+    res.send(JSON.stringify({ status: "error", message: "Invald credentials" }));
   }
 }

@@ -3,8 +3,6 @@
 const colors = require("colors");
 const Device = require(`./device`).Device;
 
-const UPDATE_TIMEOUT_MS = 5 * 1000;
-
 class Devices {
   constructor() {
     this.devs = {};
@@ -50,9 +48,7 @@ class Devices {
     try {
       clearTimeout(this.devs[devId].updateTimeout);
       console.log(
-        `Device ${devId} has been deleted due to ${
-          reason ? reason : "undefined reaason"
-        }`.grey
+        `Device ${devId} has been deleted due to ${reason ? reason : "undefined reaason"}`.grey
       );
       this.devs[devId] = {};
       if (assignAfterDeletion) {
@@ -60,9 +56,7 @@ class Devices {
         keys.map(key => {
           this.devs[devId][key] = assignAfterDeletion[key];
         });
-        console.log(
-          `Device ${devId} after deletion is ${this.devs[devId]}`.blue
-        );
+        console.log(`Device ${devId} after deletion is ${this.devs[devId]}`.blue);
       }
     } catch (error) {
       console.log(`device is already deleted. Error: ${error}`.red);

@@ -1,7 +1,7 @@
 "use strict";
 
 const END_DEV_REQ_TO_MS = 5 * 1000;
-const UPDATE_TIMEOUT_MS = 5 * 1000;
+const UPDATE_TIMEOUT_MS = 45 * 1000;
 
 class Device {
   constructor(id, station, response) {
@@ -17,7 +17,7 @@ class Device {
     this.updTimeout = null;
     this.endDeviceReqTimeout = null;
     // get station update
-    this.waitDevReadyTo = null;
+    this.waitDevReadyTO = null;
     this.resolveDevReady = null;
   }
 
@@ -29,6 +29,7 @@ class Device {
     clearTimeout(this.updTimeout);
 
     this.updTimeout = setTimeout(() => {
+      console.log("UPDATE");
       this.response.end("upd\r\n");
       this.enterPendingState();
     }, UPDATE_TIMEOUT_MS);
@@ -90,7 +91,7 @@ class Device {
         }
         case this.stateOption.pending: {
           this.resolveDevReady = resolve;
-          this.waitDevReadyTo = setTimeout(() => {
+          this.waitDevReadyTO = setTimeout(() => {
             reject("Device update timeout");
           }, END_DEV_REQ_TO_MS);
         }
@@ -100,7 +101,7 @@ class Device {
 
   handlePendingActions() {
     if (this.resolveDevReady) {
-      clearTimeout(this.waitDevReadyTo);
+      clearTimeout(this.waitDevReadyTO);
       this.resolveDevReady();
     }
   }

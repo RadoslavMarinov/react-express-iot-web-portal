@@ -8,8 +8,7 @@ var collections = ["users"];
 var dataBase = false;
 var dbClient = false;
 
-function 
-connectToDb() {
+function connectToDb() {
   return new Promise((resolve, reject) => {
     MongoClient.connect(
       url,
@@ -146,17 +145,13 @@ async function appendOneToArray(collectionName, query, arrName, arrEl) {
   return new Promise((resolve, reject) => {
     let collection = dataBase.collection(collectionName);
 
-    collection.updateOne(
-      query,
-      { $push: { [arrName]: arrEl } },
-      (err, result) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
+    collection.updateOne(query, { $push: { [arrName]: arrEl } }, (err, result) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(result);
       }
-    );
+    });
   });
 }
 
@@ -178,8 +173,8 @@ async function existsDoc(collection, query) {
   }
 }
 
-async function getDb(){
-  if(!dataBase){
+async function getDb() {
+  if (!dataBase) {
     return await connectToDb();
   } else {
     return dataBase;
