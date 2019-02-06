@@ -2,6 +2,7 @@
 
 const colors = require("colors");
 const Device = require(`./device`).Device;
+const db = require("./db/mongo");
 
 class Devices {
   constructor() {
@@ -18,14 +19,25 @@ class Devices {
 
   update(device, req, res) {
     if (!this.devs[device.id]) {
-      console.log(`New device ${device.id}`.blue);
-      this.devs[device.id] = new Device(device.id, device, res);
+      db.findOne("users", {
+        "devices.id": device.id
+      }).then(result => {
+        console.log(`${result}`.blue);
+        if (result) {
+          this.devs[device.id] = new Device(device.id, device, res);
+          this.devs[device.id].update(device, res);
+          console.log(`New device ID: ${device.id}`.blue);
+          res.write("ack\r\n");
+        } else {
+          res.send("halt\r\n");
+          console.log(`Unregistered device ID: ${device.id}`.red);
+        }
+      });
+    } else {
+      this.devs[device.id].update(device, res);
+      res.write("ack\r\n");
     }
-    this.devs[device.id].update(device, res);
-
     // var dev = device;
-
-    res.write("ack\r\n");
   }
 
   /*********************** HELPERS ********************/
@@ -48,7 +60,9 @@ class Devices {
     try {
       clearTimeout(this.devs[devId].updateTimeout);
       console.log(
-        `Device ${devId} has been deleted due to ${reason ? reason : "undefined reaason"}`.grey
+        `Device ${devId} has been deleted due to ${
+          reason ? reason : "undefined reaason"
+        }`.grey
       );
       this.devs[devId] = {};
       if (assignAfterDeletion) {
@@ -56,7 +70,9 @@ class Devices {
         keys.map(key => {
           this.devs[devId][key] = assignAfterDeletion[key];
         });
-        console.log(`Device ${devId} after deletion is ${this.devs[devId]}`.blue);
+        console.log(
+          `Device ${devId} after deletion is ${this.devs[devId]}`.blue
+        );
       }
     } catch (error) {
       console.log(`device is already deleted. Error: ${error}`.red);

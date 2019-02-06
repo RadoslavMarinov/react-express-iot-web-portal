@@ -30,7 +30,7 @@ app.use(
   session({
     store: new MongoStore({
       dbPromise: db.getDb(),
-      ttl: 5 * 24 * 3600 /* In seconds */,
+      ttl: 2 * 24 * 3600 /* In seconds */,
       touchAfter: 24 * 3600 /* In seconds */
     }),
     secret: "keyboard cat",
@@ -59,6 +59,8 @@ var counter = 0;
 
 app.post("/enddev", (req, res) => {
   var dev = req.body;
+  console.log(`${JSON.stringify(req.body)}`.blue);
+
   devices.update(dev, req, res);
 });
 // ENDDEV *****************************************************************************
@@ -84,7 +86,10 @@ server.on("connection", socket => {
 
 server.listen(port, () => console.log(`Listening on port ${port}`));
 // PRODUCNTION :::
-if (process.env.NODE_ENV === "production" || CONF_nodeEnv === "production") {
+if (
+  process.env.NODE_ENV === "production" ||
+  CONF_nodeEnv === "production"
+) {
   console.log("Node Env:", process.env.NODE_ENV);
   // Serve any static files
   // Handle React routing, return all requests to React app asd
@@ -142,9 +147,16 @@ async function checkCred(req, res, next) {
   let { username } = req.body;
   let { password } = req.body;
   try {
-    var user = await db.findOne("users", { username: req.body.username });
+    var user = await db.findOne("users", {
+      username: req.body.username
+    });
   } catch (error) {
-    res.send(JSON.stringify({ status: "error", message: "Data Base fetch failed!" }));
+    res.send(
+      JSON.stringify({
+        status: "error",
+        message: "Data Base fetch failed!"
+      })
+    );
   }
   if (user) {
     if (username === user.username && password === user.password) {
@@ -153,10 +165,22 @@ async function checkCred(req, res, next) {
       next();
     } else {
       console.log(`Password incorrect`.red);
-      res.send(JSON.stringify({ status: "error", message: "Invald credentials" }));
+      res.send(
+        JSON.stringify({
+          status: "error",
+          message: "Invald credentials"
+        })
+      );
     }
   } else {
-    console.log(`User with username ${username} does not exist in DataBase`.red);
-    res.send(JSON.stringify({ status: "error", message: "Invald credentials" }));
+    console.log(
+      `User with username ${username} does not exist in DataBase`.red
+    );
+    res.send(
+      JSON.stringify({
+        status: "error",
+        message: "Invald credentials"
+      })
+    );
   }
 }

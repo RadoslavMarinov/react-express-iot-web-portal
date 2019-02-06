@@ -1,3 +1,25 @@
+// DEVICE IN DATABBASE
+{
+  "id": "FA661234A511",
+  "class": "11",
+  "name": "BinSw2",
+  "displayName": "Device Name",
+  "endpoints": [
+      {
+          "class": "binarySwitch",
+          "name": "bs1",
+          "state": 0,
+          "displayName": "Switch_1"
+      },
+      {
+          "class": "binarySwitch",
+          "name": "bs2",
+          "state": 0,
+          "displayName": "Switch_1"
+      }
+  ]
+}
+
 {
 Session :{
   status:"last response status",
@@ -10,7 +32,7 @@ Session :{
   }
 }
 
-// "/api/login/data":
+/* "/api/login/data":*/
 {
   request: {
     username: "this.state.username",
@@ -40,4 +62,3 @@ post("/api/user/get-data")
 }
 
 
-}

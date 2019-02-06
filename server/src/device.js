@@ -1,7 +1,7 @@
 "use strict";
 
 const END_DEV_REQ_TO_MS = 5 * 1000;
-const UPDATE_TIMEOUT_MS = 45 * 1000;
+const UPDATE_TIMEOUT_MS = 47 * 1000;
 
 class Device {
   constructor(id, station, response) {
